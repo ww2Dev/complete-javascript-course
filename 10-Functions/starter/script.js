@@ -156,9 +156,12 @@ ${this.options.join('\n')}
 (Write option number)`)
     );
 
-    if (!isNaN(answer) && answer >= 0 && answer <= this.options.length - 1) {
+    typeof answer === 'Number' &&
+      answer >= 0 &&
+      answer <= this.options.length - 1 &&
       this.answers[answer]++;
-    }
+
+    this.displayResults();
     this.displayResults('string');
   },
   displayResults(type = 'array') {
@@ -171,3 +174,7 @@ ${this.options.join('\n')}
 document
   .querySelector('.poll')
   .addEventListener('click', poll.registerNewAnswer.bind(poll));
+
+// bonus
+poll.displayResults.call({ answers: [5, 2, 3] }, 'string');
+poll.displayResults.call({ answers: [1, 5, 3, 9, 6, 1] }, 'string');
