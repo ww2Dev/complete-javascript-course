@@ -50,3 +50,64 @@ book.call(eurowings, ...flightData);
 console.log(eurowings);
 //  works
 //  {airline: 'Eurowings', iataCode: 'EW', bookings: Array(3)}
+
+// bind method
+
+// the difference between bind and call method is that
+// bind method does not immediately call the function
+// instead it returns a new function where this keyword is bound
+const bookEW = book.bind(eurowings);
+// this returns a new function
+bookEW(23, 'Steven Williams');
+console.log(eurowings);
+//  works
+//  {airline: 'Eurowings', iataCode: 'EW', bookings: Array(4)}
+
+const bookLH = book.bind(lufthansa);
+bookLH(239, 'John Smith');
+console.log(lufthansa);
+//  works
+//  {airline: 'Lufthansa', iataCode: 'LH', bookings: Array(3)}
+
+// notice we dont need to pass the this keyword anymore
+// we can also preset parameters
+const bookEW23 = book.bind(eurowings, 23);
+bookEW23('Martha Cooper');
+bookEW23('James Bond');
+console.log(eurowings);
+//  works
+//  {airline: 'Eurowings', iataCode: 'EW', bookings: Array(6)}
+
+// with event listeners
+lufthansa.planes = 300;
+lufthansa.buyPlane = function () {
+  console.log(this);
+  this.planes++;
+  console.log(this.planes);
+};
+document
+  .querySelector('.buy')
+  .addEventListener('click', lufthansa.buyPlane.bind(lufthansa));
+//  without bind method this keyword would point to the button element
+//  and not to the lufthansa object
+//  so we use bind method to bind this keyword to lufthansa object
+//  the this keyword is always attached to the function that is calling it
+
+// partial application
+const addTax = (rate, value) => value + value * rate;
+console.log(addTax(0.1, 200));
+
+const addVAT = addTax.bind(null, 0.23);
+//  we dont care about this keyword so we set it to null
+// same as writing addVAT = value => value + value * 0.23
+console.log(addVAT(100));
+console.log(addVAT(23));
+
+const addTaxRate = function (rate) {
+  return function (value) {
+    return value + value * rate;
+  };
+};
+const addVAT2 = addTaxRate(0.23);
+console.log(addVAT2(100));
+console.log(addVAT2(23));
