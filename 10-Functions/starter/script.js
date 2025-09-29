@@ -202,8 +202,10 @@ console.log(notPrivate); //  46, VAR is function scoped and not block scoped
 //  closures
 // we dont create closures, closures are created automatically in certain situations
 // a closure is a function having access to the parent scope, even after the parent function has closed
-// a closure is the closed over variable environment of the execution context in which a function was created
+// a closure is the closed over variable environment of the execution context in which the function was created
 // a closure gives a function access to all the variables of its parent function, even after that parent function has returned
+// the closure variable environment consists of all the variables that were in scope at the time the closure was created
+// a closure has three scope chains: it has access to its own scope (variables defined between its curly brackets), it has access to the outer function's variables, and it has access to the global variables
 // a closure makes sure that a function doesn't lose connection to variables that existed at the function's birth place
 
 const secureBooking = function () {
