@@ -178,3 +178,23 @@ document
 // bonus
 poll.displayResults.call({ answers: [5, 2, 3] }, 'string');
 poll.displayResults.call({ answers: [1, 5, 3, 9, 6, 1] }, 'string');
+
+// IIFE
+// immediately invoked function expression
+// a function that runs once and never again
+// used to create a new scope and avoid polluting the global scope
+// also used to create private variables and methods
+
+(function () {
+  console.log('This will never run again');
+  const isPrivate = 23;
+})();
+//  console.log(isPrivate); //  error, isPrivate is not defined
+(() => console.log('This will ALSO never run again'))();
+
+{
+  const isPrivate = 23;
+  var notPrivate = 46;
+}
+//  console.log(isPrivate); //  error, isPrivate is not defined
+console.log(notPrivate); //  46, VAR is function scoped and not block scoped
