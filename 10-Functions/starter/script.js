@@ -198,3 +198,24 @@ poll.displayResults.call({ answers: [1, 5, 3, 9, 6, 1] }, 'string');
 }
 //  console.log(isPrivate); //  error, isPrivate is not defined
 console.log(notPrivate); //  46, VAR is function scoped and not block scoped
+
+//  closures
+// we dont create closures, closures are created automatically in certain situations
+// a closure is a function having access to the parent scope, even after the parent function has closed
+// a closure is the closed over variable environment of the execution context in which a function was created
+// a closure gives a function access to all the variables of its parent function, even after that parent function has returned
+// a closure makes sure that a function doesn't lose connection to variables that existed at the function's birth place
+
+const secureBooking = function () {
+  let passengerCount = 0;
+
+  return function () {
+    passengerCount++;
+    console.log(`${passengerCount} passengers`);
+  };
+};
+
+const booker = secureBooking();
+booker();
+booker();
+booker();
