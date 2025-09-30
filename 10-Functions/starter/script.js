@@ -199,14 +199,21 @@ poll.displayResults.call({ answers: [1, 5, 3, 9, 6, 1] }, 'string');
 //  console.log(isPrivate); //  error, isPrivate is not defined
 console.log(notPrivate); //  46, VAR is function scoped and not block scoped
 
-//  closures
-// we dont create closures, closures are created automatically in certain situations
-// a closure is a function having access to the parent scope, even after the parent function has closed
-// a closure is the closed over variable environment of the execution context in which the function was created
-// a closure gives a function access to all the variables of its parent function, even after that parent function has returned
-// the closure variable environment consists of all the variables that were in scope at the time the closure was created
-// a closure has three scope chains: it has access to its own scope (variables defined between its curly brackets), it has access to the outer function's variables, and it has access to the global variables
-// a closure makes sure that a function doesn't lose connection to variables that existed at the function's birth place
+// CLOSURES
+// A closure is created when a function "remembers" variables from its outer scope,
+// even after that outer function has finished executing.
+
+// Key points:
+// 1. Closures happen automatically - we don't create them manually
+// 2. The inner function maintains access to the outer function's variables
+// 3. This works even after the outer function has returned
+// 4. It's like the function carries a "backpack" with the variables it needs
+// 5. as long as the variable environment is reachable, the closure stays alive (isnt garbage collected)
+
+// Technical definition:
+// A closure is the combination of a function and the lexical environment
+// within which that function was declared. This environment consists of
+// any local variables that were in scope at the time the closure was created.
 
 const secureBooking = function () {
   let passengerCount = 0;
@@ -218,6 +225,11 @@ const secureBooking = function () {
 };
 
 const booker = secureBooking();
-booker();
-booker();
-booker();
+booker(); //  1 passengers
+booker(); //  2 passengers
+booker(); //  3 passengers
+
+//  any function always has access to the variable environment of the execution context
+//  in which it was created, even after that execution context is gone
+// the closure is basically the variable environment attached to the function,
+// exactly as it was at the time and place the function was created
