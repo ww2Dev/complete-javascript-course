@@ -77,7 +77,7 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 let arr = ['a', 'b', 'c', 'd', 'e'];
 
-// SLICE- does not mutate the original array
+//! SLICE- does not mutate the original array
 // console.log(movements.slice(2));
 // console.log(movements.slice(2, 4));
 // console.log(movements.slice(-2));
@@ -85,22 +85,35 @@ let arr = ['a', 'b', 'c', 'd', 'e'];
 // console.log(movements.slice()); // shallow copy of the array
 // console.log([...movements]); // shallow copy of the array
 
-// SPLICE - mutates the original array
+// !SPLICE - mutates the original array
 // console.log(arr.splice(2)); // mutates the original array, returns the removed elements
 // arr.splice(-1); // removes the last element
 // arr.splice(1, 2); // removes 2 elements starting from index 1 (start, deleteCount)
 
-// REVERSE - mutates the original array
+//! REVERSE - mutates the original array
 // arr = ['a', 'b', 'c', 'd', 'e'];
 // const arr2 = ['j', 'i', 'h', 'g', 'f'];
 // console.log(arr2.reverse()); // mutates the original array
 // console.log(arr2); // reversed array
 // console.log(arr); // original array
 
-// CONCAT - does not mutate the original array
+//! CONCAT - does not mutate the original array
 // const letters = arr.concat(arr2);
 // console.log(letters);
 // console.log([...arr, ...arr2]); // same as concat
 
-// JOIN - does not mutate the original array
+//! JOIN - does not mutate the original array
 // console.log(letters.join(' - ')); // joins the array elements into a string with the specified separator
+
+//! AT - does not mutate the original array
+// const arr = [23, 11, 64];
+// console.log(arr[0]);
+// console.log(arr.at(0)); // same as arr[0]
+// // getting the last array element
+// console.log(arr[arr.length - 1]);
+// console.log(arr.slice(-1)[0]); // returns a new array with the last element ([64]), then we access the first element of that array
+// console.log(arr.at(-1)); // same as above, but cleaner
+// console.log('jonas'.at(0)); // works on strings too
+// console.log('jonas'.at(-1));
+
+//? use when you want to chain methods or when you want to use negative indices
