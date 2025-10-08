@@ -283,3 +283,30 @@ boardPassengers(180, 3);
 //  because the inner function is executed after a certain time (3 seconds) and at that time boardPassengers has already finished executing
 //  but the inner function still has access to n and perGroup variables because they are in the closure scope
 //  this is possible because of closures
+
+// Coding Challenge #2
+
+/* 
+This is more of a thinking challenge than a coding challenge 🤓
+
+Take the IIFE below and at the end of the function, attach an event listener that changes the color of the selected h1 element ('header') to blue, each time the BODY element is clicked. Do NOT select the h1 element again!
+
+And now explain to YOURSELF (or someone around you) WHY this worked! Take all the time you need. Think about WHEN exactly the callback function is executed, and what that means for the variables involved in this example.
+
+GOOD LUCK 😀
+*/
+
+(function () {
+  const header = document.querySelector('h1');
+  header.style.color = 'red';
+  document.querySelector('body').addEventListener('click', () => {
+    header.style.color = 'blue';
+  });
+  // the callback function is executed when the body is clicked
+  // at that time the IIFE has already finished executing
+  // but the callback function is a closure that has access to the variable environment of the IIFE
+  // so it can access the header variable even though the IIFE has finished executing
+  // this is because the callback function maintains a reference to the variable environment of the IIFE
+  // and as long as that variable environment is reachable (the event listener is still active)
+  // the closure stays alive and can access the variables in that environment
+})();
