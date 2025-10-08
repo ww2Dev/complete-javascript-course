@@ -117,3 +117,38 @@ let arr = ['a', 'b', 'c', 'd', 'e'];
 // console.log('jonas'.at(-1));
 
 //? use when you want to chain methods or when you want to use negative indices
+
+// forEach with Maps and Sets (value, index, entire array)
+//  a callback function is a function that is passed as an argument and is called later in the code
+
+//  forEach does not support break and continue, so you cannot exit the loop early
+movements.forEach((movement, i, array) => console.log(movement, i, array));
+// 0: 200
+// 1: 450
+// 2: -400
+// ...
+// 7: 1300
+
+// forEach with Maps
+const currenciesMap = new Map([
+  ['USD', 'United States dollar'],
+  ['EUR', 'Euro'],
+  ['GBP', 'Pound sterling'],
+]);
+currenciesMap.forEach((value, key, map) => {
+  console.log(`${key}: ${value}`);
+});
+
+// USD: United States dollar
+// EUR: Euro
+// GBP: Pound sterling
+
+// forEach with Sets
+const currenciesSet = new Set(['USD', 'EUR', 'GBP']);
+currenciesSet.forEach((value, _, set) => {
+  // _ is used to ignore the second parameter (key), since Sets do not have keys
+  console.log(`${value}: ${value}`);
+});
+// USD: USD
+// EUR: EUR
+// GBP: GBP
