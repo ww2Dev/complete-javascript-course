@@ -74,3 +74,33 @@ const currencies = new Map([
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
+
+let arr = ['a', 'b', 'c', 'd', 'e'];
+
+// SLICE- does not mutate the original array
+// console.log(movements.slice(2));
+// console.log(movements.slice(2, 4));
+// console.log(movements.slice(-2));
+// console.log(movements.slice(1, -2));
+// console.log(movements.slice()); // shallow copy of the array
+// console.log([...movements]); // shallow copy of the array
+
+// SPLICE - mutates the original array
+// console.log(arr.splice(2)); // mutates the original array, returns the removed elements
+// arr.splice(-1); // removes the last element
+// arr.splice(1, 2); // removes 2 elements starting from index 1 (start, deleteCount)
+
+// REVERSE - mutates the original array
+// arr = ['a', 'b', 'c', 'd', 'e'];
+// const arr2 = ['j', 'i', 'h', 'g', 'f'];
+// console.log(arr2.reverse()); // mutates the original array
+// console.log(arr2); // reversed array
+// console.log(arr); // original array
+
+// CONCAT - does not mutate the original array
+// const letters = arr.concat(arr2);
+// console.log(letters);
+// console.log([...arr, ...arr2]); // same as concat
+
+// JOIN - does not mutate the original array
+// console.log(letters.join(' - ')); // joins the array elements into a string with the specified separator
