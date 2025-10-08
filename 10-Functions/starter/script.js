@@ -225,11 +225,61 @@ const secureBooking = function () {
 };
 
 const booker = secureBooking();
-booker(); //  1 passengers
-booker(); //  2 passengers
-booker(); //  3 passengers
+booker();
+booker();
+booker();
 
 //  any function always has access to the variable environment of the execution context
 //  in which it was created, even after that execution context is gone
 // the closure is basically the variable environment attached to the function,
 // exactly as it was at the time and place the function was created
+
+// more examples of closures
+let f;
+const g = function () {
+  const a = 23;
+  f = function () {
+    console.log(a * 2);
+  };
+};
+g(); // g is called and f is assigned
+f(); // 46
+//  because f is a closure that has access to the variable environment of g
+//  even though g has finished executing
+// f is called in the global scope but it still has access to a variable of g because at the time of creation it was in the scope of g and so it remembers / closed over that variable environment
+console.dir(f); //  shows the closure with a variable
+
+// re-assigning f function
+
+const h = function () {
+  const b = 777;
+  f = function () {
+    console.log(b * 2);
+  };
+};
+h(); // h is called and f is reassigned, closure is changed
+f(); // 1554
+//  because f is now a closure that has access to the variable environment of h
+//  even though h has finished executing
+console.dir(f); //  shows the closure with b variable
+
+//  Example 2
+const boardPassengers = function (n, wait) {
+  const perGroup = n / 3;
+  setTimeout(function () {
+    console.log(`We are now boarding all ${n} passengers`);
+    console.log(`There are 3 groups, each with ${perGroup} passengers`);
+  }, wait * 1000);
+  console.log(`Will start boarding in ${wait} seconds`);
+};
+const perGroup = 1000; //  this variable is not used by boardPassengers function because it uses its own perGroup variable
+// if there was no perGroup variable inside boardPassengers function then this variable would be used
+boardPassengers(180, 3);
+//  Will start boarding in 3 seconds
+//!  after 3 seconds
+//  We are now boarding all 180 passengers
+//  There are 3 groups, each with 60 passengers
+//  the inner function of setTimeout is a closure that has access to the variable environment of boardPassengers function even after boardPassengers has finished executing
+//  because the inner function is executed after a certain time (3 seconds) and at that time boardPassengers has already finished executing
+//  but the inner function still has access to n and perGroup variables because they are in the closure scope
+//  this is possible because of closures
