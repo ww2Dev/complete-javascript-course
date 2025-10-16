@@ -61,6 +61,25 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+const displayMovements = function (movements) {
+  containerMovements.innerHTML = ''; // clears the container before adding new movements
+  //! innerHTML is a property that allows us to get or set the HTML content of an element
+  movements.forEach(function (movement, i) {
+    const type = movement > 0 ? 'deposit' : 'withdrawal';
+    console.log(`Movement ${i + 1}: ${type} of ${Math.abs(movement)}`);
+    const html = `
+      <div class="movements__row">
+        <div class="movements__type movements__type--${type}">${
+      i + 1
+    } ${type}</div>
+        <div class="movements__value">${Math.abs(movement)}</div>
+      </div>
+    `;
+    containerMovements.insertAdjacentHTML('afterbegin', html);
+  });
+};
+displayMovements(account1.movements);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -152,3 +171,72 @@ currenciesSet.forEach((value, _, set) => {
 // USD: USD
 // EUR: EUR
 // GBP: GBP
+
+// Coding Challenge #1
+
+/* 
+Julia and Kate are doing a study on dogs. So each of them asked 5 dog owners about their dog's age, and stored the data into an array (one array for each). For now, they are just interested in knowing whether a dog is an adult or a puppy. A dog is an adult if it is at least 3 years old, and it's a puppy if it's less than 3 years old.
+
+Create a function 'checkDogs', which accepts 2 arrays of dog's ages ('dogsJulia' and 'dogsKate'), and does the following things:
+
+1. Julia found out that the owners of the FIRST and the LAST TWO dogs actually have cats, not dogs! So create a shallow copy of Julia's array, and remove the cat ages from that copied array (because it's a bad practice to mutate function parameters)
+2. Create an array with both Julia's (corrected) and Kate's data
+3. For each remaining dog, log to the console whether it's an adult ("Dog number 1 is an adult, and is 5 years old") or a puppy ("Dog number 2 is still a puppy 🐶")
+4. Run the function for both test datasets
+
+HINT: Use tools from all lectures in this section so far 😉
+
+TEST DATA 1: Julia's data [3, 5, 2, 12, 7], Kate's data [4, 1, 15, 8, 3]
+TEST DATA 2: Julia's data [9, 16, 6, 8, 3], Kate's data [10, 5, 6, 1, 4]
+
+GOOD LUCK 😀
+*/
+
+function checkDogs(dogsJulia, dogsKate) {
+  const cleanData = [...dogsJulia.slice(1, -2), ...dogsKate];
+  cleanData.forEach((age, i) => {
+    age >= 3
+      ? console.log(`Dog number ${i + 1} is an adult, and is ${age} years old`)
+      : console.log(`Dog number ${i + 1} is still a puppy 🐶`);
+  });
+}
+
+checkDogs([3, 5, 2, 12, 7], [4, 1, 15, 8, 3]);
+checkDogs([9, 16, 6, 8, 3], [10, 5, 6, 1, 4]);
+
+// DATA TRANSFORMATION METHODS - MAP, FILTER, REDUCE
+
+const arrtest = [1, 2, 3, 4, 5];
+// MAP - does not mutate the original array
+// similar to forEach, but returns a new array
+const arrtest2 = arrtest.map(x => x * 2);
+console.log(arrtest2); // [2, 4, 6, 8, 10]
+
+// FILTER - does not mutate the original array
+// creates a new array with all elements that pass the test implemented by the provided function
+const arrtest3 = arrtest.filter(x => x % 2 === 0);
+console.log(arrtest3); // [2, 4]
+
+// REDUCE - does not mutate the original array
+// executes a reducer function (that you provide) on each element of the array, resulting in a single output value
+const arrtest4 = arrtest.reduce((acc, curr) => acc + curr, 0);
+console.log(arrtest4); // 15
+
+const eurToUsd = 1.1;
+const movementsUSD = movements.map(mov => mov * eurToUsd);
+console.log(movements);
+console.log(movementsUSD);
+
+// old way of doing the same thing
+const movementsUSDfor = [];
+for (const mov of movements) movementsUSDfor.push(mov * eurToUsd);
+console.log(movementsUSDfor);
+
+// map has the same 3 parameters as forEach (current element, index, entire array)
+const movementsDescriptions = movements.map(
+  (mov, i, arr) =>
+    `Movement ${i + 1}: You ${mov > 0 ? 'deposited' : 'withdrew'} ${Math.abs(
+      mov
+    )} in ${arr.length} total movements`
+);
+console.log(movementsDescriptions);
