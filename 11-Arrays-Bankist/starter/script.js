@@ -80,6 +80,33 @@ const displayMovements = function (movements) {
 };
 displayMovements(account1.movements);
 
+const user = 'Steven Thomas Williams'; // stw
+// Using map + join approach
+// const userName = user
+//   .toLowerCase()
+//   .split(' ')
+//   .map(name => name[0])
+//   .join('');
+
+// Alternative using reduce (more direct)
+// const userNameReduce = user
+//   .toLowerCase()
+//   .split(' ')
+//   .reduce((initials, name) => initials + name[0], '');
+
+const createUsername = user =>
+  user
+    .toLowerCase()
+    .split(' ')
+    .reduce((initials, name) => initials + name[0], '');
+
+const createUsernames = accs =>
+  accs.forEach(acc => {
+    // forEach is used because it mutates the original array
+    acc.username = createUsername(acc.owner);
+  });
+createUsernames(accounts);
+console.log(accounts);
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -141,7 +168,7 @@ let arr = ['a', 'b', 'c', 'd', 'e'];
 //  a callback function is a function that is passed as an argument and is called later in the code
 
 //  forEach does not support break and continue, so you cannot exit the loop early
-movements.forEach((movement, i, array) => console.log(movement, i, array));
+// movements.forEach((movement, i, array) => console.log(movement, i, array));
 // 0: 200
 // 1: 450
 // 2: -400
@@ -154,9 +181,9 @@ const currenciesMap = new Map([
   ['EUR', 'Euro'],
   ['GBP', 'Pound sterling'],
 ]);
-currenciesMap.forEach((value, key, map) => {
-  console.log(`${key}: ${value}`);
-});
+// currenciesMap.forEach((value, key, map) => {
+//   console.log(`${key}: ${value}`);
+// });
 
 // USD: United States dollar
 // EUR: Euro
@@ -164,10 +191,10 @@ currenciesMap.forEach((value, key, map) => {
 
 // forEach with Sets
 const currenciesSet = new Set(['USD', 'EUR', 'GBP']);
-currenciesSet.forEach((value, _, set) => {
-  // _ is used to ignore the second parameter (key), since Sets do not have keys
-  console.log(`${value}: ${value}`);
-});
+// currenciesSet.forEach((value, _, set) => {
+//   // _ is used to ignore the second parameter (key), since Sets do not have keys
+//   console.log(`${value}: ${value}`);
+// });
 // USD: USD
 // EUR: EUR
 // GBP: GBP
@@ -192,17 +219,17 @@ TEST DATA 2: Julia's data [9, 16, 6, 8, 3], Kate's data [10, 5, 6, 1, 4]
 GOOD LUCK 😀
 */
 
-function checkDogs(dogsJulia, dogsKate) {
-  const cleanData = [...dogsJulia.slice(1, -2), ...dogsKate];
-  cleanData.forEach((age, i) => {
-    age >= 3
-      ? console.log(`Dog number ${i + 1} is an adult, and is ${age} years old`)
-      : console.log(`Dog number ${i + 1} is still a puppy 🐶`);
-  });
-}
+// function checkDogs(dogsJulia, dogsKate) {
+//   const cleanData = [...dogsJulia.slice(1, -2), ...dogsKate];
+//   cleanData.forEach((age, i) => {
+//     age >= 3
+//       ? console.log(`Dog number ${i + 1} is an adult, and is ${age} years old`)
+//       : console.log(`Dog number ${i + 1} is still a puppy 🐶`);
+//   });
+// }
 
-checkDogs([3, 5, 2, 12, 7], [4, 1, 15, 8, 3]);
-checkDogs([9, 16, 6, 8, 3], [10, 5, 6, 1, 4]);
+// checkDogs([3, 5, 2, 12, 7], [4, 1, 15, 8, 3]);
+// checkDogs([9, 16, 6, 8, 3], [10, 5, 6, 1, 4]);
 
 // DATA TRANSFORMATION METHODS - MAP, FILTER, REDUCE
 
@@ -210,33 +237,34 @@ const arrtest = [1, 2, 3, 4, 5];
 // MAP - does not mutate the original array
 // similar to forEach, but returns a new array
 const arrtest2 = arrtest.map(x => x * 2);
-console.log(arrtest2); // [2, 4, 6, 8, 10]
+// console.log(arrtest2); // [2, 4, 6, 8, 10]
 
 // FILTER - does not mutate the original array
 // creates a new array with all elements that pass the test implemented by the provided function
 const arrtest3 = arrtest.filter(x => x % 2 === 0);
-console.log(arrtest3); // [2, 4]
+// console.log(arrtest3); // [2, 4]
 
 // REDUCE - does not mutate the original array
 // executes a reducer function (that you provide) on each element of the array, resulting in a single output value
 const arrtest4 = arrtest.reduce((acc, curr) => acc + curr, 0);
-console.log(arrtest4); // 15
+// console.log(arrtest4); // 15
 
 const eurToUsd = 1.1;
-const movementsUSD = movements.map(mov => mov * eurToUsd);
-console.log(movements);
-console.log(movementsUSD);
+// const movementsUSD = movements.map(mov => mov * eurToUsd);
+// console.log(movements);
+// console.log(movementsUSD);
 
 // old way of doing the same thing
-const movementsUSDfor = [];
-for (const mov of movements) movementsUSDfor.push(mov * eurToUsd);
-console.log(movementsUSDfor);
+// const movementsUSDfor = [];
+// for (const mov of movements) movementsUSDfor.push(mov * eurToUsd);
+// console.log(movementsUSDfor);
 
-// map has the same 3 parameters as forEach (current element, index, entire array)
-const movementsDescriptions = movements.map(
-  (mov, i, arr) =>
-    `Movement ${i + 1}: You ${mov > 0 ? 'deposited' : 'withdrew'} ${Math.abs(
-      mov
-    )} in ${arr.length} total movements`
-);
-console.log(movementsDescriptions);
+// // map has the same 3 parameters as forEach (current element, index, entire array)
+// const movementsDescriptions = movements.map(
+//   (mov, i, arr) =>
+//     `Movement ${i + 1}: You ${mov > 0 ? 'deposited' : 'withdrew'} ${Math.abs(
+//       mov
+//     )} in ${arr.length} total movements`
+// );
+// console.log(movementsDescriptions);
+// console.log(movementsDescriptions);
