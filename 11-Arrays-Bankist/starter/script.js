@@ -66,7 +66,7 @@ const displayMovements = function (movements) {
   //! innerHTML is a property that allows us to get or set the HTML content of an element
   movements.forEach(function (movement, i) {
     const type = movement > 0 ? 'deposit' : 'withdrawal';
-    console.log(`Movement ${i + 1}: ${type} of ${Math.abs(movement)}`);
+    // console.log(`Movement ${i + 1}: ${type} of ${Math.abs(movement)}`);
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${
@@ -80,7 +80,7 @@ const displayMovements = function (movements) {
 };
 displayMovements(account1.movements);
 
-const user = 'Steven Thomas Williams'; // stw
+// const user = 'Steven Thomas Williams'; // stw
 // Using map + join approach
 // const userName = user
 //   .toLowerCase()
@@ -105,8 +105,14 @@ const createUsernames = accs =>
     // forEach is used because it mutates the original array
     acc.username = createUsername(acc.owner);
   });
+
+const calcPrintBalance = movements => {
+  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+  // console.log(`Current balance: ${balance}`);
+  labelBalance.textContent = `${balance} EUR`;
+};
 createUsernames(accounts);
-console.log(accounts);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -268,3 +274,51 @@ const eurToUsd = 1.1;
 // );
 // console.log(movementsDescriptions);
 // console.log(movementsDescriptions);
+const deposits = movements.filter(mov => mov > 0);
+// old way of doing the same thing
+// const depositsFor = [];
+// for (const mov of movements) if (mov > 0) depositsFor.push(mov);
+// console.log(depositsFor);
+// the difference between filter and for of is that filter returns a new array and for of does not which allows method chaining
+const withdrawals = movements.filter(mov => mov < 0);
+
+const balance = movements.reduce((bal, mov, i, arr) => bal + mov, 0);
+// old way of doing the same thing
+// let balance2 = 0;
+// for (const mov of movements) balance2 += mov;
+// console.log(balance2);
+
+// Maximum value in an array
+const max = movements.reduce(
+  (acc, mov) => (acc > mov ? acc : mov),
+  movements[0]
+);
+// console.log(max);
+// console.log(movements);
+
+// Coding Challenge #2
+
+/* 
+Let's go back to Julia and Kate's study about dogs. This time, they want to convert dog ages to human ages and calculate the average age of the dogs in their study.
+
+Create a function 'calcAverageHumanAge', which accepts an arrays of dog's ages ('ages'), and does the following things in order:
+
+1. Calculate the dog age in human years using the following formula: if the dog is <= 2 years old, humanAge = 2 * dogAge. If the dog is > 2 years old, humanAge = 16 + dogAge * 4.
+2. Exclude all dogs that are less than 18 human years old (which is the same as keeping dogs that are at least 18 years old)
+3. Calculate the average human age of all adult dogs (you should already know from other challenges how we calculate averages 😉)
+4. Run the function for both test datasets
+
+TEST DATA 1: [5, 2, 4, 1, 15, 8, 3]
+TEST DATA 2: [16, 6, 10, 5, 6, 1, 4]
+
+GOOD LUCK 😀
+*/
+
+const calcAverageHumanAge = ages =>
+  ages
+    .map(dogAge => (dogAge <= 2 ? 2 * dogAge : 16 + dogAge * 4)) // convert to human age
+    .filter(humanAge => humanAge >= 18) // filter out dogs less than 18 human years
+    .reduce((acc, age, _, arr) => acc + age / arr.length, 0); // calculate average age
+
+console.log(calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]));
+console.log(calcAverageHumanAge([16, 6, 10, 5, 6, 1, 4]));
