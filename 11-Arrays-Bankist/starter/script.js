@@ -80,20 +80,6 @@ const displayMovements = function (movements) {
 };
 displayMovements(account1.movements);
 
-// const user = 'Steven Thomas Williams'; // stw
-// Using map + join approach
-// const userName = user
-//   .toLowerCase()
-//   .split(' ')
-//   .map(name => name[0])
-//   .join('');
-
-// Alternative using reduce (more direct)
-// const userNameReduce = user
-//   .toLowerCase()
-//   .split(' ')
-//   .reduce((initials, name) => initials + name[0], '');
-
 const createUsername = user =>
   user
     .toLowerCase()
@@ -106,12 +92,32 @@ const createUsernames = accs =>
     acc.username = createUsername(acc.owner);
   });
 
-const calcPrintBalance = movements => {
+createUsernames(accounts);
+const calcDisplayBalance = movements => {
   const balance = movements.reduce((acc, mov) => acc + mov, 0);
   // console.log(`Current balance: ${balance}`);
-  labelBalance.textContent = `${balance} EUR`;
+  labelBalance.textContent = `${balance}€`;
 };
-createUsernames(accounts);
+calcDisplayBalance(account1.movements);
+
+const calcDisplaySummary = movements => {
+  const incomes = movements
+    .filter(mov => mov > 0) // deposits
+    .reduce((acc, mov) => acc + mov, 0); // sum of deposits
+  labelSumIn.textContent = `${incomes}€`;
+  const outcomes = movements
+    .filter(mov => mov < 0) // withdrawals
+    .reduce((acc, mov) => acc + mov, 0); // sum of withdrawals
+  labelSumOut.textContent = `${Math.abs(outcomes)}€`;
+  const interest = movements
+    .filter(mov => mov > 0) // deposits
+    .map(deposit => deposit * (1.2 / 100)) // 1.2% interest
+    .filter(int => int >= 1) // bank only pays interest if it is at least 1€
+    .reduce((acc, int) => acc + int, 0); // sum of interest
+  labelSumInterest.textContent = `${interest}€`;
+};
+calcDisplaySummary(account1.movements);
+// a good practice in javascript is to NOT mutate the original array, so dont use methods like splice or reverse that mutate the original array, use slice, concat, etc that do not mutate the original array
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -264,7 +270,19 @@ const eurToUsd = 1.1;
 // const movementsUSDfor = [];
 // for (const mov of movements) movementsUSDfor.push(mov * eurToUsd);
 // console.log(movementsUSDfor);
+// const user = 'Steven Thomas Williams'; // stw
+// Using map + join approach
+// const userName = user
+//   .toLowerCase()
+//   .split(' ')
+//   .map(name => name[0])
+//   .join('');
 
+// Alternative using reduce (more direct)
+// const userNameReduce = user
+//   .toLowerCase()
+//   .split(' ')
+//   .reduce((initials, name) => initials + name[0], '');
 // // map has the same 3 parameters as forEach (current element, index, entire array)
 // const movementsDescriptions = movements.map(
 //   (mov, i, arr) =>
@@ -322,3 +340,21 @@ const calcAverageHumanAge = ages =>
 
 console.log(calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]));
 console.log(calcAverageHumanAge([16, 6, 10, 5, 6, 1, 4]));
+
+const totalDepositsUSD = movements
+  .filter(mov => mov > 0) // deposits
+  .map((mov, i, arr) => mov * eurToUsd) // in USD note: the arr is the arr returned from the previous method
+  .reduce((acc, mov) => acc + mov, 0); // total balance in USD
+
+// FIND - returns the first element that satisfies the condition
+const firstWithdrawal = movements.find(mov => mov < 0);
+// console.log(movements);
+// console.log(firstWithdrawal);
+const account = accounts.find(acc => acc.owner === 'Jessica Davis');
+// console.log(account);
+// let oldAccount = {};
+// for (const acc of accounts) {
+//   if (acc.owner === 'Jessica Davis') {
+//     oldAccount = acc;
+//   }
+// }
