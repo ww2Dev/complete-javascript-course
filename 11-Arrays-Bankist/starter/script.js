@@ -72,13 +72,12 @@ const displayMovements = function (movements) {
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-        <div class="movements__value">${Math.abs(movement)}</div>
+        <div class="movements__value">${Math.abs(movement)}€</div>
       </div>
     `;
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
 };
-displayMovements(account1.movements);
 
 const createUsername = user =>
   user
@@ -93,14 +92,13 @@ const createUsernames = accs =>
   });
 
 createUsernames(accounts);
-const calcDisplayBalance = movements => {
-  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+const calcDisplayBalance = acc => {
+  acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
   // console.log(`Current balance: ${balance}`);
-  labelBalance.textContent = `${balance}€`;
+  labelBalance.textContent = `${acc.balance}€`;
 };
-calcDisplayBalance(account1.movements);
 
-const calcDisplaySummary = movements => {
+const calcDisplaySummary = ({ interestRate, movements }) => {
   const incomes = movements
     .filter(mov => mov > 0) // deposits
     .reduce((acc, mov) => acc + mov, 0); // sum of deposits
@@ -111,13 +109,78 @@ const calcDisplaySummary = movements => {
   labelSumOut.textContent = `${Math.abs(outcomes)}€`;
   const interest = movements
     .filter(mov => mov > 0) // deposits
-    .map(deposit => deposit * (1.2 / 100)) // 1.2% interest
+    .map(deposit => deposit * interestRate)
     .filter(int => int >= 1) // bank only pays interest if it is at least 1€
     .reduce((acc, int) => acc + int, 0); // sum of interest
-  labelSumInterest.textContent = `${interest}€`;
+  labelSumInterest.textContent = `${parseFloat(interest.toFixed(2))}€`;
 };
-calcDisplaySummary(account1.movements);
 // a good practice in javascript is to NOT mutate the original array, so dont use methods like splice or reverse that mutate the original array, use slice, concat, etc that do not mutate the original array
+
+const updateUI = currentAcc => {
+  // Display movements
+  displayMovements(currentAcc.movements);
+  // Display balance
+  calcDisplayBalance(currentAcc);
+  // Display summary
+  calcDisplaySummary(currentAcc);
+};
+
+// Events handlers
+let currentAccount;
+btnLogin.addEventListener('click', e => {
+  e.preventDefault(); // prevent form from submitting
+
+  const username = inputLoginUsername.value;
+  const pin = Number(inputLoginPin.value);
+  console.log(username, pin);
+  currentAccount = accounts.find(acc => acc.username === username);
+  if (currentAccount?.pin === pin) {
+    // Login successful
+
+    // Display UI and message
+    labelWelcome.textContent = `Welcome back, ${
+      currentAccount.owner.split(' ')[0]
+    }`;
+    containerApp.style.opacity = 1;
+    // Clear input fields
+    inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoginUsername.blur();
+    inputLoginPin.blur();
+    // Update UI
+    updateUI(currentAccount);
+    console.log(currentAccount);
+  }
+});
+
+btnTransfer.addEventListener('click', e => {
+  e.preventDefault();
+  const amount = Number(inputTransferAmount.value);
+  const to = inputTransferTo.value;
+
+  console.log(amount, to);
+  // check if account exists
+  const receiverAcc = accounts.find(acc => acc.username === to);
+  // clear input fields
+  inputTransferAmount.value = inputTransferTo.value = '';
+  inputTransferAmount.blur();
+  inputTransferTo.blur();
+  // validation
+  if (
+    !receiverAcc ||
+    amount <= 0 ||
+    currentAccount.balance < amount ||
+    receiverAcc?.username === currentAccount.username
+  ) {
+    console.log('Transfer invalid');
+    return;
+  }
+
+  // transfer the money
+  currentAccount.movements.push(-amount);
+  receiverAcc.movements.push(amount);
+
+  updateUI(currentAccount);
+});
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
