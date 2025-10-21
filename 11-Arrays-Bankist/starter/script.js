@@ -600,3 +600,26 @@ console.log(
       .map(breed => breed.averageWeight)
   )
 );
+
+function twoSum(nums, target) {
+  const hashMap = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    let current = nums[i];
+    // current + complement = target
+    // complement = target - current
+    let complement = target - current;
+    if (hashMap.has(complement)) {
+      return [hashMap.get(complement), i];
+    } else {
+      hashMap.set(current, i);
+    }
+  }
+}
+
+console.log(twoSum([2, 7, 11, 15], 9)); // Output: [0, 1]
+console.log(twoSum([1, 2, 3, 4, 5], 5)); // Output: [1, 2]
+console.log(twoSum([3, 2, 4], 6)); // Output: [1, 2]
+
+// Testing the duplicate problem case
+console.log('=== Duplicate Problem Case ===');
+console.log(twoSum([2, 5, 3, 2, 4], 6)); // [3,4]
