@@ -61,10 +61,11 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
   containerMovements.innerHTML = ''; // clears the container before adding new movements
   //! innerHTML is a property that allows us to get or set the HTML content of an element
-  movements.forEach(function (movement, i) {
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  movs.forEach(function (movement, i) {
     const type = movement > 0 ? 'deposit' : 'withdrawal';
     // console.log(`Movement ${i + 1}: ${type} of ${Math.abs(movement)}`);
     const html = `
@@ -221,6 +222,14 @@ btnClose.addEventListener('click', e => {
     containerApp.style.opacity = 0;
     labelWelcome.textContent = `Log in to get started`;
   }
+});
+
+// SORT BUTTON
+let sorted = false;
+btnSort.addEventListener('click', e => {
+  e.preventDefault();
+  sorted = !sorted;
+  displayMovements(currentAccount.movements, sorted);
 });
 
 /////////////////////////////////////////////////
@@ -623,3 +632,46 @@ console.log(twoSum([3, 2, 4], 6)); // Output: [1, 2]
 // Testing the duplicate problem case
 console.log('=== Duplicate Problem Case ===');
 console.log(twoSum([2, 5, 3, 2, 4], 6)); // [3,4]
+
+// SORT - mutates the original array
+// strings
+const owners = ['Jonas', 'Zach', 'Adam', 'Martha'];
+console.log(owners.sort()); // Sorts the array alphabetically
+// numbers
+console.log(movements);
+// console.log(movements.sort()); // does not work as expected because it converts numbers to strings and sorts them lexicographically
+//  like "22" comes before "3" because "2" is less than "3"
+
+// we can fix this by providing a compare function
+// ascending
+movements.sort((a, b) => a - b); // a = 200 , b = 450 => 200 - 450 = -250 < 0 => a comes before b
+// descending
+// movements.sort((a, b) => b - a);
+// console.log(movements);
+// if we return < 0, a comes before b
+// if we return > 0, b comes before a
+// if we return 0, no change
+
+// array groupings
+
+const groupedMovements = Object.groupBy(
+  (movements, mov => (mov > 0 ? 'deposits' : 'withdrawals'))
+);
+// Objects.groupBy(array, callback)
+// its a new method that groups array elements based on the callback function
+// its similar to reduce, but it returns an object with keys as group names and values as arrays of grouped elements
+// console.log(groupedMovements) // { deposits: [ 200, 450, 3000, 70, 1300 ], withdrawals: [ -400, -650, -130 ] }
+
+const groupedByActivity = Object.groupBy(accounts, account => {
+  const movementCount = account.movements.length;
+  if (movementCount <= 8) return 'very active';
+  if (movementCount <= 4) return 'active';
+  if (movementCount <= 1) return 'moderate';
+  return 'inactive';
+});
+// no group will be created if no element matches the condition (e.g., no inactive accounts in this case)
+
+// a very common use case is to group data via a certain property like type, activity level, age group, etc.
+// const groupedAccounts = Object.groupBy(accounts, acc => acc.type);
+// you can also destructure the object in the callback
+// const groupedAccounts = Object.groupBy(accounts, ({ type }) => type);
