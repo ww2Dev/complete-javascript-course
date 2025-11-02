@@ -712,3 +712,21 @@ labelBalance.addEventListener('click', () => {
   );
   console.log(movementsUI);
 });
+
+// non-destructive array methods
+const arrOriginal = [5, 2, 4, 1, 3];
+// toReversed
+const reversed1 = arrOriginal.reverse(); // destructive reverse
+const reversed2 = arrOriginal.toReversed(); // non-destructive reverse
+
+// toSorted
+const sorted1 = arrOriginal.sort((a, b) => a - b); // destructive sort
+const sorted2 = arrOriginal.toSorted((a, b) => a - b); // non-destructive sort
+
+// toSpliced
+const spliced1 = arrOriginal.splice(1, 2); // destructive splice
+const spliced2 = arrOriginal.toSpliced(1, 2); // non-destructive splice
+
+// with
+// movements[1] = 10000; // destructive
+const with1 = movements.with(1, 10000); // non-destructive
