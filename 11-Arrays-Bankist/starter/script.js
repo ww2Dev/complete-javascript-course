@@ -654,8 +654,8 @@ movements.sort((a, b) => a - b); // a = 200 , b = 450 => 200 - 450 = -250 < 0 =>
 
 // array groupings
 
-const groupedMovements = Object.groupBy(
-  (movements, mov => (mov > 0 ? 'deposits' : 'withdrawals'))
+const groupedMovements = Object.groupBy(movements, mov =>
+  mov > 0 ? 'deposits' : 'withdrawals'
 );
 // Objects.groupBy(array, callback)
 // its a new method that groups array elements based on the callback function
@@ -675,3 +675,40 @@ const groupedByActivity = Object.groupBy(accounts, account => {
 // const groupedAccounts = Object.groupBy(accounts, acc => acc.type);
 // you can also destructure the object in the callback
 // const groupedAccounts = Object.groupBy(accounts, ({ type }) => type);
+
+// more ways of creating and filling arrays
+
+// Constructor
+const x = new Array(7); // creates an array with 7 empty slots
+// console.log(x); // [ <7 empty items> ]
+// you cannot use map, forEach, etc on this array because the slots are empty
+// you can use fill to fill the array with a value - mutates the original array
+x.fill(1); // fills all slots with 1
+// console.log(x); // [1, 1, 1, 1, 1, 1, 1]
+
+// you can also specify the start and end index
+x.fill(2, 3, 5); // fills slots from index 3 to 5 (not included) with 2
+// console.log(x); // [1, 1, 1, 2, 2, 1, 1]
+
+// Array.from - creates an array from an array-like or iterable object
+const y = Array.from({ length: 7 }, () => 1); // creates an array with 7 slots filled with 1
+// console.log(y); // [1, 1, 1, 1, 1, 1, 1]
+const z = Array.from({ length: 7 }, (currentElement, index) => index + 1); // creates an array with numbers from 1 to 7
+// console.log(z); // [1, 2, 3, 4, 5, 6, 7]
+const randomDiceRolls = Array.from({ length: 100 }, () =>
+  Math.ceil(Math.random() * 6)
+); // creates an array with 100 random dice rolls (1-6)
+console.log(randomDiceRolls); // [3, 5, 1, 6, 2, 4, ...]
+
+const hasZero = randomDiceRolls.includes(0);
+console.log(hasZero);
+
+// array.from is called .from because it creates an array from an array-like or iterable object like strings, sets, maps, etc.
+// another great example is queryAll that returns a NodeList (array-like object) that can be converted to an array using Array.from
+labelBalance.addEventListener('click', () => {
+  const movementsUI = Array.from(
+    document.querySelectorAll('.movements__value'),
+    el => Number(el.textContent.replace('€', ''))
+  );
+  console.log(movementsUI);
+});
