@@ -405,13 +405,13 @@ const eurToUsd = 1.1;
 // );
 // console.log(movementsDescriptions);
 // console.log(movementsDescriptions);
-const deposits = movements.filter(mov => mov > 0);
+const movementDeposits = movements.filter(mov => mov > 0);
 // old way of doing the same thing
 // const depositsFor = [];
 // for (const mov of movements) if (mov > 0) depositsFor.push(mov);
 // console.log(depositsFor);
 // the difference between filter and for of is that filter returns a new array and for of does not which allows method chaining
-const withdrawals = movements.filter(mov => mov < 0);
+const movementWithdrawals = movements.filter(mov => mov < 0);
 
 const balance = movements.reduce((bal, mov, i, arr) => bal + mov, 0);
 // old way of doing the same thing
@@ -730,3 +730,62 @@ const spliced2 = arrOriginal.toSpliced(1, 2); // non-destructive splice
 // with
 // movements[1] = 10000; // destructive
 const with1 = movements.with(1, 10000); // non-destructive
+
+// grouping array by categories - Object.groupBy
+// creating a new array from scratch - Array.from
+// creating a new array from scratch with n empty positions - new Array(n)
+// joining 2 or more arrays - array.concat or [...array1, ...array2]
+// creating a new array containing unique values from arr - [...new Set(arr)]
+// creating a new array containing unique elements that are present in both arr1 and arr2 - [...new Set(arr1).intersect(new Set(arr2))]
+
+// Array methods practice
+
+// 1.
+const bankDepositSum = accounts
+  .flatMap(acc => acc.movements)
+  .filter(mov => mov > 0)
+  .reduce((sum, cur) => sum + cur, 0);
+console.log(bankDepositSum);
+
+// 2. how many deposits in the bank with at least 1000€
+// const numDeposits1000 = accounts.flatMap(acc => acc.movements)
+//   .filter(mov => mov > 1000).length;
+
+// using reduce
+const numDeposits1000 = accounts
+  .flatMap(acc => acc.movements)
+  .reduce((count, cur) => (cur >= 1000 ? ++count : count), 0); // count++ returns the value before incrementing
+
+// 3. // create an object that contains the sum of deposits and withdrawals
+const { deposits, withdrawals } = accounts
+  .flatMap(acc => acc.movements)
+  .reduce(
+    (sums, cur) => (
+      cur > 0 ? (sums.deposits += cur) : (sums.withdrawals += cur),
+      // Another way to write it without repeating sums
+      // sums[cur > 0 ? 'deposits' : 'withdrawals'] += cur
+
+      sums // using comma operator to return sums object (expression1, expression2)
+    ),
+
+    { deposits: 0, withdrawals: 0 }
+  );
+
+console.log('Total deposits:', deposits);
+console.log('Total withdrawals:', withdrawals);
+
+// 4. convert a string to title case
+const convertTitleCase = title => {
+  const capitalize = str => str.replace(str[0], str[0].toUpperCase());
+  const exceptions = ['a', 'an', 'and', 'the', 'but', 'or', 'on', 'in', 'with'];
+  const titleCase = title
+    .toLowerCase() // convert to lowercase first
+    .split(' ') // split into words
+    .map(word => (exceptions.includes(word) ? word : capitalize(word))) // capitalize if not an exception
+    .join(' '); // join back into a string
+  return capitalize(titleCase); // ensure capitalization of the first word
+};
+
+console.log(convertTitleCase('this is a nice title'));
+console.log(convertTitleCase('this is a LONG title but not too long'));
+console.log(convertTitleCase('and here is another title with an EXAMPLE'));
