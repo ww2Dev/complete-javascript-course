@@ -894,3 +894,6 @@ const ownersTooLittle = dogs
 
 // 10.
 // console.log(dogs.toSorted((dogA, dogB) => dogA.recFood - dogB.recFood));
+
+// arr.sort((a, b) => a - b); is ascending because if a is less than b, we return a negative value which means a comes before b
+// and as it loops through the array, it places the smallest values at the beginning.
