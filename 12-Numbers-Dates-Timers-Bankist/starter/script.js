@@ -94,7 +94,7 @@ const displayMovements = function (movements, sort = false) {
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-        <div class="movements__value">${mov}€</div>
+        <div class="movements__value">${mov.toFixed(2)}€</div>
       </div>
     `;
 
@@ -104,19 +104,19 @@ const displayMovements = function (movements, sort = false) {
 
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${acc.balance}€`;
+  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
 };
 
 const calcDisplaySummary = function (acc) {
   const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes}€`;
+  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
 
   const out = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out)}€`;
+  labelSumOut.textContent = `${Math.abs(out.toFixed(2))}€`;
 
   const interest = acc.movements
     .filter(mov => mov > 0)
@@ -126,7 +126,7 @@ const calcDisplaySummary = function (acc) {
       return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest}€`;
+  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
 };
 
 const createUsernames = function (accs) {
@@ -206,7 +206,7 @@ btnTransfer.addEventListener('click', function (e) {
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
 
-  const amount = +inputLoanAmount.value;
+  const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
@@ -302,3 +302,115 @@ btnSort.addEventListener('click', function (e) {
 // isNan() - checks if a value is Not a Number after type coercion "hello" -> not a number -> true
 // Number.parseInt() - parses a string and returns an integer
 // Number.parseFloat() - parses a string and returns a floating-point number
+
+// MATH AND ROUNDING
+// square root
+// console.log(Math.sqrt(25)); // 5
+// can also use exponentiation operator (**)
+// console.log(25 ** (1 / 2)); // 5 (25^0,5)
+
+// Maximum & minimum value
+// console.log(Math.max(5, 18, 23, 11, 2)); // 23
+// console.log(Math.max(5, 18, '23', 11, 2)); // 23 (type coercion)
+// console.log(Math.max(5, 18, '23px', 11, 2)); // NaN (doesnt do parsing)
+
+// console.log(Math.min(5, 18, 23, 11, 2)); // 2
+
+// Math has constant properties
+// console.log(Math.PI); // 3.141592653589793
+// console.log(Math.PI * Number.parseFloat('10px') ** 2); // area of circle with radius 10px
+
+// console.log(Math.random()); // random number between 0 and 1 (not including 1)
+// console.log(Math.trunc(Math.random() * 6) + 1); // random integer between 1 and 6
+// const randomInt = (min, max) =>
+//   Math.floor(Math.random() * (max - min + 1)) + min;
+// we do max - min + 1 to make sure max is inclusive
+//  -min to shift the range from (0 to max-min) to (min to max-min+min) which is (min to max)
+//  and +1 to include max in the range
+
+// another way to do it is to use Math.round instead of Math.floor
+// const randomInt = (min, max) =>
+//   Math.round(Math.random() * (max - min)) + min;
+// this works because Math.round will round up numbers >= .5
+// so the maximum value of Math.random() * (max - min) is (max - min)
+// lets assume max - min = 5
+// so Math.random() * 5 can produce values from 0 to 5 (not including 5)
+// when we add min to it, we get values from min to max (not including max)
+// but when the value is 4.5 or higher, Math.round will round it up to 5
+// thus including max in the range
+// console.log(randomInt(10, 20));
+
+// Math.trunc - removes decimal part (towards zero)
+// Math.floor - rounds down to negative infinity
+// Math.ceil - rounds up to positive infinity
+// Math.round - rounds to nearest integer
+
+// console.log(Math.trunc(4.7)); // 4
+// console.log(Math.floor(4.7)); // 4
+// console.log(Math.ceil(4.7)); // 5
+// console.log(Math.round(4.7)); // 5
+
+// console.log(Math.trunc(-4.7)); // -4 (removes decimal, moves towards zero)
+// console.log(Math.floor(-4.7)); // -5 (rounds down towards negative infinity)
+// console.log(Math.ceil(-4.7)); // -4 (rounds up towards positive infinity)
+// console.log(Math.round(-4.7)); // -5
+
+// ALL THESE METHODS DO TYPE COERCION "23" -> 23
+
+// Rounding decimals
+// console.log((2.7).toFixed(0)); // '3' (returns string)
+// console.log((2.7).toFixed(3)); // '2.700'
+// console.log((2.345).toFixed(2)); // '2.35'
+// console.log((2.345).toFixed(1)); // '2.3'
+// toFixed returns a string, so if you need a number, you have to convert it
+// console.log(+(2.345).toFixed(2)); // 2.35
+
+// remember that these are numbers, meaning they are primitive values
+// behind the scenes JS does "boxing" which means it temporarily converts the primitive value to an object
+// so that we can call methods on it
+// after the method is called, the object is converted back to a primitive value
+// like new Number(2.345).toFixed(2);
+
+// REMAINDER OPERATOR
+// console.log(5 % 2); // 1 (5 = 2 * 2 + 1)
+// its 2 * 2 + 1 because 2 is the largest multiple of 2 that is less than or equal to 5
+// console.log(5 / 2); // 2.5
+// console.log(8 % 3); // 2 (8 = 3 * 2 + 2)
+// console.log(8 / 3); // 2.6666...
+// again 3 * 2 + 2 because 2 is the largest multiple of 3 that is less than or equal to 8
+
+// even numbers
+// console.log(6 % 2); // 0
+// odd numbers
+// console.log(7 % 2); // 1
+
+const isEven = n => n % 2 === 0;
+// console.log(isEven(8)); // true
+
+const isPrime = n => {
+  if (n <= 1) return false; // 0 and 1 are not prime numbers
+  for (let i = 2; i <= Math.sqrt(n); i++) {
+    // check divisibility up to the square root of n
+    // Why sqrt(n)? Because factors come in pairs!
+    // If n = a × b, then one factor must be ≤ √n and the other ≥ √n
+    // Example: 36 = 4 × 9, where 4 ≤ √36(6) and 9 ≥ √36(6)
+    // So if we check all numbers up to √n(in this example 6) and find no factors,
+    // we know there are no factors beyond √n either (they would need a pair ≤ √n)
+    // This cuts our checks from n-1 down to just √n iterations - much faster!
+
+    if (n % i === 0) return false;
+  }
+  return true;
+};
+labelBalance.addEventListener('click', function () {
+  [...document.querySelectorAll('.movements__row')].forEach(function (row, i) {
+    // 0, 2 ,4,6
+    if (isEven(i)) {
+      row.style.backgroundColor = 'orangered';
+    }
+    // 0,3,6
+    if (i % 3 === 0) {
+      row.style.backgroundColor = 'blue';
+    }
+  });
+});
