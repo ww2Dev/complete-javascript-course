@@ -164,7 +164,7 @@ btnLogin.addEventListener('click', function (e) {
   );
   console.log(currentAccount);
 
-  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+  if (currentAccount?.pin === +inputLoginPin.value) {
     // Display UI and message
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(' ')[0]
@@ -182,7 +182,7 @@ btnLogin.addEventListener('click', function (e) {
 
 btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
-  const amount = Number(inputTransferAmount.value);
+  const amount = +inputTransferAmount.value;
   const receiverAcc = accounts.find(
     acc => acc.username === inputTransferTo.value
   );
@@ -206,7 +206,7 @@ btnTransfer.addEventListener('click', function (e) {
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
 
-  const amount = Number(inputLoanAmount.value);
+  const amount = +inputLoanAmount.value;
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
@@ -223,7 +223,7 @@ btnClose.addEventListener('click', function (e) {
 
   if (
     inputCloseUsername.value === currentAccount.username &&
-    Number(inputClosePin.value) === currentAccount.pin
+    +inputClosePin.value === currentAccount.pin
   ) {
     const index = accounts.findIndex(
       acc => acc.username === currentAccount.username
@@ -251,3 +251,54 @@ btnSort.addEventListener('click', function (e) {
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
+
+// in JS numbers are represented internally in 64 base 2 format, all numbers are floating point
+//  meaning 23 === 23.0
+
+//  base 10 - 0 to 9
+//  base 2 - 0 and 1
+// just how in base 10 we have 3/10 = 0.33333... in base 2 some numbers cannot be represented precisely
+// examples:
+
+// console.log(0.1 + 0.2); // 0.30000000000000004
+// console.log(0.1 + 0.2 === 0.3); // false
+// this is an error in JS floating point arithmetics due to base 2 representation
+
+// to convert string to number
+// console.log(Number('23'));
+// console.log(+'23');
+// this works because JS does type coercion when using the + operator
+
+// parsing - extracting numbers from strings
+// Number is also an object with methods
+// console.log(Number.parseInt('30px', 10)); // 30
+// console.log(Number.parseInt('e23', 10)); // NaN
+// parseInt tries to extract number from the beginning of the string until it encounters a character that is not part of the number
+// because the global isNan() function converts the value to a number before checking if it's NaN, it can produce some unexpected results
+
+// second argument is the radix (base) of the numeral system to be used
+// console.log(Number.parseFloat('2.5rem')); // 2.5
+// console.log(Number.parseFloat('2.5.5rem')); // 2.5
+// these methods are also available directly on the global object
+// console.log(parseInt('30px', 10));
+// console.log(parseFloat('2.5rem'));
+// console.log(Number.isNaN(20)); // false
+// console.log(Number.isNaN('20')); // false
+// console.log(Number.isNaN(+'20X')); // true
+// console.log(Number.isNaN(23 / 0)); // false
+// Number.isNaN() is a more reliable way to check for NaN than the global isNaN() function
+
+// console.log(Number.isFinite(20)); // true
+// console.log(Number.isFinite('20')); // false
+// console.log(Number.isFinite(+'20X')); // false
+// console.log(Number.isFinite(23 / 0)); // false
+// Number.isFinite() is a reliable way to check if a value is a number
+
+// the difference between number.isNan and isFinite is that isNaN checks specifically for the NaN value, while isFinite checks if a value is a finite number (not NaN, not Infinity, and not -Infinity).
+
+// summary:
+// Number.isNaN() - checks if a value is  of type NaN
+// Number.isFinite() - checks if a value is a finite (not NaN, not Infinity, and not -Infinity) number
+// isNan() - checks if a value is Not a Number after type coercion "hello" -> not a number -> true
+// Number.parseInt() - parses a string and returns an integer
+// Number.parseFloat() - parses a string and returns a floating-point number
