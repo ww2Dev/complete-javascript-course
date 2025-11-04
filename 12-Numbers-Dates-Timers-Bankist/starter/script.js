@@ -402,15 +402,31 @@ const isPrime = n => {
   }
   return true;
 };
-labelBalance.addEventListener('click', function () {
-  [...document.querySelectorAll('.movements__row')].forEach(function (row, i) {
-    // 0, 2 ,4,6
-    if (isEven(i)) {
-      row.style.backgroundColor = 'orangered';
-    }
-    // 0,3,6
-    if (i % 3 === 0) {
-      row.style.backgroundColor = 'blue';
-    }
-  });
-});
+// labelBalance.addEventListener('click', function () {
+//   [...document.querySelectorAll('.movements__row')].forEach(function (row, i) {
+//     // 0, 2 ,4,6
+//     if (isEven(i)) {
+//       row.style.backgroundColor = 'orangered';
+//     }
+//     // 0,3,6
+//     if (i % 3 === 0) {
+//       row.style.backgroundColor = 'blue';
+//     }
+//   });
+// });
+
+// without numeric separators
+const diamaeter = 2874600000; // 2.8746 billion
+// with numeric separators
+const diameterUS = 2_874_600_000; // easier to read
+
+const priceCents = 345_99; // 345.99
+// console.log(priceCents); // 34599
+
+const transferFee1 = 15_00; // looks like 15.00
+const transferFee2 = 1_500; // looks like 1500
+// but both are just 1500 in value
+
+// when trying to convert strings with numeric separators to numbers, it will result in NaN
+// console.log(Number('230_000')); // NaN
+// console.log(parseInt('230_000')); // 230 because it stops parsing at the _ character
