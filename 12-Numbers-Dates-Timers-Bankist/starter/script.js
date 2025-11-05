@@ -81,20 +81,32 @@ const inputClosePin = document.querySelector('.form__input--pin');
 /////////////////////////////////////////////////
 // Functions
 
-const displayMovements = function (movements, sort = false) {
+const displayMovements = function (account, sort = false) {
   containerMovements.innerHTML = '';
+  console.log(account);
 
-  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  const combinedMovsDates = account.movements.map((mov, i) => {
+    return { movement: mov, date: account.movementsDates[i] };
+  });
+  const movs = sort
+    ? combinedMovsDates.sort((a, b) => a.movement - b.movement)
+    : combinedMovsDates;
+  console.log(movs);
 
-  movs.forEach(function (mov, i) {
-    const type = mov > 0 ? 'deposit' : 'withdrawal';
-
+  movs.forEach((mov, i) => {
+    const type = mov.movement > 0 ? 'deposit' : 'withdrawal';
+    const displayDate = new Date(mov.date).toLocaleDateString('en-IL', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit',
+    });
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
-        <div class="movements__value">${mov.toFixed(2)}€</div>
+    <div class="movements__date">${displayDate}</div>
+        <div class="movements__value">${mov.movement.toFixed(2)}€</div>
       </div>
     `;
 
@@ -142,7 +154,7 @@ createUsernames(accounts);
 
 const updateUI = function (acc) {
   // Display movements
-  displayMovements(acc.movements);
+  displayMovements(acc);
 
   // Display balance
   calcDisplayBalance(acc);
@@ -154,6 +166,10 @@ const updateUI = function (acc) {
 ///////////////////////////////////////
 // Event handlers
 let currentAccount;
+// // FAKE ALWAYS LOGGED IN
+// currentAccount = account1;
+// updateUI(currentAccount);
+// containerApp.style.opacity = 100;
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -169,6 +185,16 @@ btnLogin.addEventListener('click', function (e) {
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(' ')[0]
     }`;
+    const currentDate = new Date();
+
+    labelDate.textContent = currentDate.toLocaleDateString('en-IL', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit',
+      weekday: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
     containerApp.style.opacity = 100;
 
     // Clear input fields
@@ -196,7 +222,9 @@ btnTransfer.addEventListener('click', function (e) {
   ) {
     // Doing the transfer
     currentAccount.movements.push(-amount);
+    currentAccount.movementsDates.push(new Date().toISOString());
     receiverAcc.movements.push(amount);
+    receiverAcc.movementsDates.push(new Date().toISOString());
 
     // Update UI
     updateUI(currentAccount);
@@ -211,6 +239,7 @@ btnLoan.addEventListener('click', function (e) {
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     // Add movement
     currentAccount.movements.push(amount);
+    currentAccount.movementsDates.push(new Date().toISOString());
 
     // Update UI
     updateUI(currentAccount);
@@ -244,7 +273,7 @@ btnClose.addEventListener('click', function (e) {
 let sorted = false;
 btnSort.addEventListener('click', function (e) {
   e.preventDefault();
-  displayMovements(currentAccount.movements, !sorted);
+  displayMovements(currentAccount, !sorted);
   sorted = !sorted;
 });
 
@@ -476,3 +505,45 @@ const transferFee2 = 1_500; // looks like 1500
 
 // bigInt is also converted to string when concatenated with a string
 // console.log(20n + ' is a big number'); // '20 is a big number'
+
+// ? DATES AND TIMES
+
+// creating dates has 4 ways
+//! 1. using the Date() constructor without arguments creates a date object with the current date and time - most common
+// const now = new Date();
+// console.log(now);
+
+//! 2. creating a date from a date string - unreliable because different browsers may parse the string differently
+// console.log(new Date('Aug 02 2023 18:05:41'));
+
+//! 3. creating a date from year, month, day, hour, minute, second, millisecond (month is 0-indexed) - more reliable
+// ? keep in mind that months are 0-indexed (0 = January, 11 = December) thats why its common to see month as month - 1
+// console.log(new Date(2023, 7, 2, 18, 5, 41)); // Aug 02 2023 18:05:41
+// console.log(new Date(2023, 0, 31)); // Jan 31 2023
+
+//! 4. creating a date from milliseconds since Jan 1 1970 (Unix epoch time) - useful for date calculations
+// console.log(new Date(0)); // Jan 01 1970
+// console.log(new Date(3 * 24 * 60 * 60 * 1000)); // Jan 04 1970 (3 days later)
+
+// ! dates perform auto correction
+// console.log(new Date(2023, 10, 31)); // Nov 31 2023 -> Dec 01 2023 (November has only 30 days)
+
+//? working with dates
+// const future = new Date(2030, 10, 19, 15, 23);
+// console.log(future); // Nov 19 2030 15:23:00
+// console.log(future.getFullYear()); // 2030 //! dont use getYear() - returns years since 1900
+// console.log(future.getMonth()); // 10 (November, 0-indexed)
+// console.log(future.getDate()); // 19 (day of the month)
+// console.log(future.getDay()); // 2 (Tuesday, 0 = Sunday, 6 = Saturday) days also 0-indexed
+// console.log(future.getHours()); // 15
+// console.log(future.getMinutes()); // 23
+// console.log(future.getSeconds()); // 0
+// console.log(future.toISOString()); // 2030-11-19T14:23:00.000Z (in UTC time) //! the Z indicates that the time is in UTC
+// console.log(future.getTime()); // 1920309780000 (milliseconds since Jan 1 1970)
+// console.log(new Date(1920309780000)); // Nov 19 2030 15:23:00 (creating date from milliseconds)
+
+// console.log(Date.now()); // current timestamp in milliseconds since Jan 1 1970
+// ? all of these methods have setter counterparts to set specific parts of the date
+// future.setFullYear(2040);
+// console.log(future); // Nov 19 2040 15:23:00
+/////////////////////////////////////////////////
