@@ -80,6 +80,19 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 /////////////////////////////////////////////////
 // Functions
+const formatDate = (date, locale) => {
+  const daysPassed = calcDaysPassed(new Date(), new Date(date));
+  if (daysPassed === 0) return 'Today';
+  if (daysPassed === 1) return 'Yesterday';
+  if (daysPassed <= 7) return `${daysPassed} days ago`;
+  else {
+    return new Intl.DateTimeFormat(locale, {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit',
+    }).format(new Date(date));
+  }
+};
 
 const displayMovements = function (account, sort = false) {
   containerMovements.innerHTML = '';
@@ -95,11 +108,7 @@ const displayMovements = function (account, sort = false) {
 
   movs.forEach((mov, i) => {
     const type = mov.movement > 0 ? 'deposit' : 'withdrawal';
-    const displayDate = new Date(mov.date).toLocaleDateString('en-IL', {
-      day: '2-digit',
-      month: '2-digit',
-      year: '2-digit',
-    });
+    const displayDate = formatDate(mov.date, account.locale);
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${
@@ -166,10 +175,18 @@ const updateUI = function (acc) {
 ///////////////////////////////////////
 // Event handlers
 let currentAccount;
-// // FAKE ALWAYS LOGGED IN
-// currentAccount = account1;
-// updateUI(currentAccount);
-// containerApp.style.opacity = 100;
+// Fake always logged in
+currentAccount = account1;
+updateUI(currentAccount);
+containerApp.style.opacity = 100;
+
+const dateFormatter = new Intl.DateTimeFormat(currentAccount.locale, {
+  day: '2-digit',
+  month: '2-digit',
+  year: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+});
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -186,15 +203,16 @@ btnLogin.addEventListener('click', function (e) {
       currentAccount.owner.split(' ')[0]
     }`;
     const currentDate = new Date();
+    labelDate.textContent = dateFormatter.format(currentDate);
 
-    labelDate.textContent = currentDate.toLocaleDateString('en-IL', {
-      day: '2-digit',
-      month: '2-digit',
-      year: '2-digit',
-      weekday: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    // labelDate.textContent = currentDate.toLocaleDateString('en-IL', {
+    //   day: '2-digit',
+    //   month: '2-digit',
+    //   year: '2-digit',
+    //   weekday: 'short',
+    //   hour: '2-digit',
+    //   minute: '2-digit',
+    // });
     containerApp.style.opacity = 100;
 
     // Clear input fields
@@ -547,3 +565,19 @@ const transferFee2 = 1_500; // looks like 1500
 // future.setFullYear(2040);
 // console.log(future); // Nov 19 2040 15:23:00
 /////////////////////////////////////////////////
+
+//? operations with dates
+// const future = new Date(2030, 10, 19, 15, 23);
+// console.log(+future); // 1920309780000 (timestamp in milliseconds)
+
+function calcDaysPassed(date1, date2) {
+  Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
+} // difference in milliseconds divided by milliseconds in a day
+//! we use Math.abs to get the absolute difference between the two dates (-10 becomes 10)
+
+// console.log(calcDaysPassed(new Date(2030, 10, 19), new Date(2030, 10, 31))); // 12
+
+//? new internationalization API (intl)
+// the difference between doing Intl.DateTimeFormat and using toLocaleDateString is that the former allows more customization and options
+//  as well as being more performant for multiple date formatting since it creates a formatter object that can be reused
+//  while toLocaleDateString creates a new formatter object each time it is called
