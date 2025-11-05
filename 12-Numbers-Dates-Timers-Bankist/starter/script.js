@@ -93,6 +93,12 @@ const formatDate = (date, locale) => {
     }).format(new Date(date));
   }
 };
+const formatCurrency = (value, currency, locale) => {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
 
 const displayMovements = function (account, sort = false) {
   containerMovements.innerHTML = '';
@@ -109,13 +115,18 @@ const displayMovements = function (account, sort = false) {
   movs.forEach((mov, i) => {
     const type = mov.movement > 0 ? 'deposit' : 'withdrawal';
     const displayDate = formatDate(mov.date, account.locale);
+    const formattedMov = formatCurrency(
+      mov.movement,
+      account.currency,
+      account.locale
+    );
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
     <div class="movements__date">${displayDate}</div>
-        <div class="movements__value">${mov.movement.toFixed(2)}€</div>
+        <div class="movements__value">${formattedMov}</div>
       </div>
     `;
 
@@ -125,19 +136,28 @@ const displayMovements = function (account, sort = false) {
 
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${acc.balance.toFixed(2)}€`;
+
+  labelBalance.textContent = formatCurrency(
+    acc.balance,
+    acc.currency,
+    acc.locale
+  );
 };
 
 const calcDisplaySummary = function (acc) {
   const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
+  labelSumIn.textContent = formatCurrency(incomes, acc.currency, acc.locale);
 
   const out = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out.toFixed(2))}€`;
+  labelSumOut.textContent = formatCurrency(
+    Math.abs(out),
+    acc.currency,
+    acc.locale
+  );
 
   const interest = acc.movements
     .filter(mov => mov > 0)
@@ -147,7 +167,11 @@ const calcDisplaySummary = function (acc) {
       return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+  labelSumInterest.textContent = formatCurrency(
+    interest,
+    acc.currency,
+    acc.locale
+  );
 };
 
 const createUsernames = function (accs) {
@@ -581,3 +605,16 @@ function calcDaysPassed(date1, date2) {
 // the difference between doing Intl.DateTimeFormat and using toLocaleDateString is that the former allows more customization and options
 //  as well as being more performant for multiple date formatting since it creates a formatter object that can be reused
 //  while toLocaleDateString creates a new formatter object each time it is called
+
+// internationalizing numbers
+const num = 3884764.23;
+const options = {
+  style: 'currency', // 'unit', 'percent', 'currency'
+  // unit: 'celsius', // 'mile-per-hour', 'kilometer-per-hour', 'celsius', 'fahrenheit', 'liter', 'gallon', 'kilogram', 'pound'
+  currency: 'EUR', // required if style is 'currency'
+  // currencyDisplay: 'code', // 'symbol', 'narrowSymbol', 'code', 'name'
+  // minimumFractionDigits: 2, // to control decimal places
+  // maximumFractionDigits: 2, // to control decimal places
+  // useGrouping: false, // to disable thousands separator
+};
+console.log(new Intl.NumberFormat('en-US', options).format(num));
