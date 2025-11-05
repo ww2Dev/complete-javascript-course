@@ -430,3 +430,49 @@ const transferFee2 = 1_500; // looks like 1500
 // when trying to convert strings with numeric separators to numbers, it will result in NaN
 // console.log(Number('230_000')); // NaN
 // console.log(parseInt('230_000')); // 230 because it stops parsing at the _ character
+
+// NUMBERS
+// numbers are represented in 64 bits, of these 64 only 53 are used to store the digits
+// the other bits are used to store the position of the decimal point and the sign (positive or negative)
+// this means that the largest number that can be represented accurately is 2^53 - 1
+// which is 9007199254740991
+// anything larger than this will lose precision
+// console.log(2 ** 53 - 1); // 9007199254740991
+// console.log(Number.MAX_SAFE_INTEGER); // 9007199254740991
+
+// thats why we have BigInt type in JS
+// to represent numbers larger than 2^53 - 1 accurately
+// BigInt can represent integers with arbitrary precision
+// to create a BigInt, we can append n to the end of the number or use the BigInt() function
+// console.log(48329047230947230947230947230947230947230n);
+// console.log(BigInt(4832904723));
+// keep in mind that BigInt cannot be used with regular numbers in arithmetic operations
+// and that the BigInt() function and the n suffix are not interchangeable
+// console.log(48329047230947230947230947230947230947230n);
+// console.log(BigInt(48329047230947230947230947230947230947230)); // this will display a different value due to precision loss and will give an error if the number is too large
+
+//? operations with BigInt
+//! Math operations dont work with BigInt
+// console.log(Math.sqrt(16n)); // TypeError: Cannot convert a BigInt value to a number
+
+//! but we can do basic arithmetic operations
+// console.log(10000n + 10000n); // 20000n
+
+// console.log(48329047230947230947230947230947230947230n * 100000n);
+
+// ! division with BigInt truncates the decimal part
+// console.log(10n / 3n); // 3n (no decimal part, it truncates towards zero)
+// console.log(10 / 3); // 3.3333333333333335
+
+//! what we CANT do is mix BigInt and regular numbers
+// console.log(10000n + 10000); // TypeError: Cannot mix BigInt and other types
+// and thats where the BigInt() function comes in handy
+// console.log(10000n + BigInt(10000)); // 20000n
+
+//! in comparisons, JS does type coercion
+// console.log(20n > 15); // true
+// console.log(20n === 20); // false (strict equality, no type coercion)
+// console.log(20n == 20); // true (loose equality, type coercion)
+
+// bigInt is also converted to string when concatenated with a string
+// console.log(20n + ' is a big number'); // '20 is a big number'
