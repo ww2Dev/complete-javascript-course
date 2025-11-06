@@ -99,12 +99,6 @@ const formatCurrency = (value, currency, locale) => {
     currency: currency,
   }).format(value);
 };
-const formatCurrency = (value, currency, locale) => {
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: currency,
-  }).format(value);
-};
 
 const displayMovements = function (account, sort = false) {
   containerMovements.innerHTML = '';
@@ -285,12 +279,14 @@ btnLoan.addEventListener('click', function (e) {
   const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
-    // Add movement
-    currentAccount.movements.push(amount);
-    currentAccount.movementsDates.push(new Date().toISOString());
+    setTimeout(() => {
+      // Add movement
+      currentAccount.movements.push(amount);
+      currentAccount.movementsDates.push(new Date().toISOString());
 
-    // Update UI
-    updateUI(currentAccount);
+      // Update UI
+      updateUI(currentAccount);
+    }, 2500);
   }
   inputLoanAmount.value = '';
 });
@@ -624,3 +620,44 @@ const options = {
   // useGrouping: false, // to disable thousands separator
 };
 console.log(new Intl.NumberFormat('en-US', options).format(num));
+
+// Timers: setTimeout and setInterval
+//? setTimeout - executes a function after a specified delay (in milliseconds)
+// setTimeout(() => {
+//   console.log('This message is delayed by 2 seconds');
+// }, 2000);
+
+// ? setInterval - executes a function repeatedly at specified intervals (in milliseconds)
+// setInterval(() => {
+//   console.log('This message is repeated every 1 second');
+// }, 1000);
+// ? the setInterval will keep running until it is stopped using clearInterval or the page is closed meaning it will keep putting the callback function in the callback queue every interval
+
+//! the third argument and onwards in setTimeout and setInterval are the arguments to be passed to the callback function
+const ingredients = ['olives', 'spinach'];
+const pizzaTimer = setTimeout(
+  (ing1, ing2) => {
+    console.log(`Here is your pizza with ${ing1} and ${ing2} 🍕`);
+  },
+  3000,
+  ...ingredients
+);
+//! you can cancel the timer using clearTimeout
+// clearTimeout(pizzaTimer); // cancels the timer before it executes
+
+//! important note: the callback function is executed after the delay/interval, but the actual delay/interval may be longer due to the event loop and other tasks being executed
+//!  so the delay is a minimum delay, not an exact delay since the callback is placed in the callback queue, it will only be executed after the call stack and micro task queue is empty
+// ? these are web APIs and are not part of the JS language itself, they are provided by the browser environment
+
+// const clock = setInterval(() => {
+//   const now = new Date();
+
+//   console.log(
+//     now.toLocaleTimeString('en-IL', {
+//       hour: '2-digit',
+//       minute: '2-digit',
+//       second: '2-digit',
+//     })
+//   );
+// }, 1000);
+/////////////////////////////////////////////////
