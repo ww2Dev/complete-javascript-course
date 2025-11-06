@@ -99,6 +99,12 @@ const formatCurrency = (value, currency, locale) => {
     currency: currency,
   }).format(value);
 };
+const formatCurrency = (value, currency, locale) => {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
 
 const displayMovements = function (account, sort = false) {
   containerMovements.innerHTML = '';
