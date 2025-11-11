@@ -271,3 +271,33 @@ console.log(logo.dataset.versionNumber); // 3.0
 // logo.classList.contains('c'); // returns true if class c is present
 // ! don't use logo.className = 'jonas' - this will overwrite all existing classes
 ///////////////////////////////////////
+
+// ? types of events and event handlers
+
+const h1 = document.querySelector('h1');
+h1.addEventListener('mouseenter', alertH1);
+
+// a shorter way of adding event listeners - not recommended / old way
+// h1.onmouseenter = e => {
+//   alert('You are reading the heading :D');
+// };
+
+// ! addEventListener allows us to add multiple event listeners to the same event type on the same element
+// ! whereas the old way (element.onevent = function) would overwrite the previous event handler if called again for the same event type on the same element
+// I.E
+// h1.addEventListener('mouseenter', e => {
+//   alert('First handler');
+// });
+// h1.addEventListener('mouseenter', e => {
+//   alert('Second handler');
+// });
+// ! both handlers will be called when the event is triggered
+
+// ? removing event listeners
+function alertH1(e) {
+  alert('You are reading the heading :D');
+  h1.removeEventListener('mouseenter', alertH1); // removes the event listener after it has been called once
+}
+// setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 3000); // removes the event listener after 3 seconds
+
+///////////////////////////////////////
