@@ -132,17 +132,59 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
-///////////////////////////////////////
+const buttonScrollTo = document.querySelector('.btn--scroll-to');
+const section1 = document.querySelector('#section--1');
+
+buttonScrollTo.addEventListener('click', e => {
+  // ? old way of scrolling / getting element coordinates
+  const section1coords = section1.getBoundingClientRect();
+  console.log('section1coords', section1coords);
+  //!  returns size of element and its position relative to viewport
+  /*
+   {
+    x: measured from left edge of viewport,
+    y: measured from top edge of viewport,
+    width, height,
+    top: measured from top edge of viewport,
+    right: measured from left edge of viewport + width,
+    bottom: measured from top edge of viewport + height,
+    left: measured from left edge of viewport
+    } */
+  //  ! left == x and top == y, right == left + width, bottom == top + height
+  console.log('buttonScrollTocoords', e.target.getBoundingClientRect());
+
+  //? scroll position relative to the entire document
+  // console.log('current scroll (X/Y)', window.pageXOffset, window.pageYOffset); // old way (deprecated)
+  console.log('current scroll (X/Y)', window.scrollX, window.scrollY);
+
+  // ? viewport dimensions
+  console.log(
+    'height/width viewport',
+    document.documentElement.clientHeight,
+    document.documentElement.clientWidth
+  );
+  // ? scrolling
+  //! old way
+  // window.scrollTo(
+  //   section1coords.left + window.scrollX,
+  //   section1coords.top + window.scrollY
+  // );
+  //! modern way
+  section1.scrollIntoView({ behavior: 'smooth' });
+});
+
+////////////////////////////////////////////
+////////////////////////////////////////////
 //? Selecting DOM elements
 // console.log(document.documentElement); // Logs the entire HTML document
 // console.log(document.head); // Logs the head element
 // console.log(document.body); // Logs the body element
 
 const header = document.querySelector('.header'); // Selects the first element with class 'header'
-const sections = document.querySelectorAll('.section'); // Selects all elements with class 'section'
-const section1 = document.getElementById('section--1'); // Selects the element with ID 'section--1'
-const buttons = document.getElementsByTagName('button'); // selects all button elements
-const btns = document.getElementsByClassName('btn'); // selects all elements by class name 'btn'
+// const sections = document.querySelectorAll('.section'); // Selects all elements with class 'section'
+// const section1 = document.getElementById('section--1'); // Selects the element with ID 'section--1'
+// const buttons = document.getElementsByTagName('button'); // selects all button elements
+// const btns = document.getElementsByClassName('btn'); // selects all elements by class name 'btn'
 // ! getElementsByTagName and getElementsByClassName return live HTMLCollections which means they update automatically when the DOM changes.
 // ! In contrast, querySelectorAll returns a static NodeList that does not update automatically.
 
@@ -173,4 +215,59 @@ document.querySelector('.btn--close-cookie')?.addEventListener('click', e => {
   // message.parentElement.removeChild(message); // moving from child to parent is called DOM traversing
 });
 
+///////////////////////////////////////
+// ? Styles
+message.style.backgroundColor = '#37383d';
+message.style.width = '120%';
+
+// console.log(message.style.color); // .someproperty only works for inline styles
+// console.log(getComputedStyle(message).color); // to get all styles, including those from CSS files
+//! the difference between message.style and getComputedStyle(message) is that the former only accesses inline styles set directly on the element (meaning only inline styles applied will have a value, the rest will be empty), while the latter retrieves all computed styles applied to the element, including those from external stylesheets and inherited styles (meaning the object you are returned is one in which all keys are properties that have a value).
+
+message.style.height =
+  Number.parseFloat(getComputedStyle(message).height) + 30 + 'px'; // message.height returns a string with 'px' at the end, so we need to parse it to a number first
+
+// ? CSS custom properties (variables)
+document.documentElement.style.setProperty('--color-primary', 'orangered'); // changing the value of a CSS variable
+// ! setProperty takes two arguments: the property name (with -- for CSS variables) and the value to set. it works on any element.
+// message.style.setProperty('background-color', 'blue'); //! changing the background color of the message element using setProperty (must use kebab-case for CSS properties)
+//! root element is document.documentElement, so root CSS variables are defined there
+
+// ? attributes
+const logo = document.querySelector('.nav__logo');
+// standard attributes
+// console.log(logo.alt); // bankist logo
+// non-standard attributes
+// console.log(logo.designer); // undefined
+// ! non-standard attributes are not directly accessible as properties of the DOM element since they are not part of the standard set of attributes defined for that element type JS doesnt automatically create them on the Object.
+
+// console.log(logo.getAttribute('designer')); // Jonas Schmedtmann
+//! non-standard attributes can be accessed using getAttribute
+
+// ? setting attributes
+// logo.alt = 'Beautiful minimalist logo'; // standard attribute
+// logo.setAttribute('company', 'Bankist'); // non-standard attribute
+
+// console.log(logo.src) // absolute URL
+// to get the relative URL as defined in the HTML, we use getAttribute
+// console.log(logo.getAttribute('src')) // relative URL
+
+// ! the same is true for links
+// const link = document.querySelector('.nav__link--btn');
+// console.log(link.href); // absolute URL
+// console.log(link.getAttribute('href')); // relative URL
+
+// ? data attributes
+// data attributes are used to store extra information on HTML elements that doesn't have any visual representation
+// they are defined using the prefix 'data-' followed by the attribute name
+// for example: <div data-version-number="3.0" ></div>
+console.log(logo.dataset.versionNumber); // 3.0
+// ! dataset is a special property that allows us to access all data attributes of an element as a JS object
+
+// ? classes
+// logo.classList.add('c', 'j'); // adds classes c and j
+// logo.classList.remove('c'); // removes class c
+// logo.classList.toggle('c'); // toggles class c
+// logo.classList.contains('c'); // returns true if class c is present
+// ! don't use logo.className = 'jonas' - this will overwrite all existing classes
 ///////////////////////////////////////
