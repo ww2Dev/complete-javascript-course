@@ -131,7 +131,9 @@ document.addEventListener('keydown', function (e) {
     closeModal();
   }
 });
+/////////////////////////////////////////////
 
+// ? Smooth scrolling
 const buttonScrollTo = document.querySelector('.btn--scroll-to');
 const section1 = document.querySelector('#section--1');
 
@@ -173,6 +175,17 @@ buttonScrollTo.addEventListener('click', e => {
   section1.scrollIntoView({ behavior: 'smooth' });
 });
 
+//? page navigation
+const navLinks = document.querySelectorAll('.nav__link');
+navLinks.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const id = this.getAttribute('href'); // get the relative URL from the href attribute value
+    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+////////////////////////////////////////////
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 //? Selecting DOM elements
@@ -342,3 +355,4 @@ function alertH1(e) {
 // ! we should use event delegation (attaching a single event listener to a parent element) instead of attaching event listeners to multiple child elements.
 // ! this is more efficient and easier to manage.
 ///////////////////////////////////////
+// ? Event delegation
