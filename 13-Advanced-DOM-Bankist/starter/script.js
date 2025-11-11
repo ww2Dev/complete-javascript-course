@@ -301,3 +301,17 @@ function alertH1(e) {
 // setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 3000); // removes the event listener after 3 seconds
 
 ///////////////////////////////////////
+//? Event propagation: bubbling and capturing
+
+//! Capturing phase - event goes down to the element
+// when an element is clicked, the event first goes through the capturing phase, where it travels down from the root of the DOM tree (Document) to the target element.
+
+//! Target phase - event reaches the target element
+// when the event reaches the target element, the event listeners attached to that element are executed.
+//! Bubbling phase - event bubbles up from the element
+// after the event listeners on the target element are executed, the event enters the bubbling phase, where it travels back up the DOM tree to the root, executing any event listeners attached to ancestor elements along the way.
+
+// ! By default, event listeners are executed during the target and bubbling phases.
+// ! We can specify whether an event listener should be executed during the capturing phase by passing a third argument (useCapture) as true to addEventListener.
+// ! If useCapture is false or omitted, the event listener will be executed during the bubbling phase.
+// ! not all events bubble , or can be captures. some events only happen on the target element. for example, focus and blur events do not bubble.
