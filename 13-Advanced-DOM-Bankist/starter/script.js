@@ -315,3 +315,30 @@ function alertH1(e) {
 // ! We can specify whether an event listener should be executed during the capturing phase by passing a third argument (useCapture) as true to addEventListener.
 // ! If useCapture is false or omitted, the event listener will be executed during the bubbling phase.
 // ! not all events bubble , or can be captures. some events only happen on the target element. for example, focus and blur events do not bubble.
+
+////////////////////////////////////
+// ? event propagation in practice
+
+// const randomInt = (min, max) =>
+//   Math.floor(Math.random() * (max - min + 1) + min);
+// const randomColor = () =>
+//   `rgb(${randomInt(0, 255)},${randomInt(0, 255)},${randomInt(0, 255)})`;
+// console.log(randomColor());
+
+// document.querySelector('.nav__link').addEventListener('click', function (e) {
+//   this.style.backgroundColor = randomColor();
+//   console.log('LINK', e.target, e.currentTarget);
+//   // e.stopPropagation(); // stops the event from bubbling up
+// });
+// document.querySelector('.nav__links').addEventListener('click', function (e) {
+//   this.style.backgroundColor = randomColor();
+//   console.log('CONTAINER', e.target, e.currentTarget);
+// });
+// document.querySelector('.nav').addEventListener('click', function (e) {
+//   this.style.backgroundColor = randomColor();
+//   console.log('NAV', e.target, e.currentTarget);
+// });
+// ! in general, we should avoid stopping propagation unless absolutely necessary, as it can lead to unexpected behavior and make debugging more difficult.
+// ! we should use event delegation (attaching a single event listener to a parent element) instead of attaching event listeners to multiple child elements.
+// ! this is more efficient and easier to manage.
+///////////////////////////////////////
