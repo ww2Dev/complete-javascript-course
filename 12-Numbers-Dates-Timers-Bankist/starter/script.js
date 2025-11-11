@@ -196,21 +196,37 @@ const updateUI = function (acc) {
   calcDisplaySummary(acc);
 };
 
+const startLogOutTimer = () => {
+  // set time to 5 seconds
+  let time = 5 * 60;
+
+  const tick = () => {
+    const minutes = String(Math.trunc(time / 60)).padStart(2, 0);
+    const seconds = String(time % 60).padStart(2, 0);
+    labelTimer.textContent = `${minutes}:${seconds}`;
+
+    // clear at 0s
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = 'Log in to get started';
+      containerApp.style.opacity = 0;
+    }
+
+    // decrease -1s after display
+    time--;
+  };
+  //! we check and then decrease to avoid logging out at 00:01
+  tick();
+  const timer = setInterval(tick, 1000);
+  return timer;
+};
 ///////////////////////////////////////
 // Event handlers
-let currentAccount;
-// Fake always logged in
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 100;
-
-const dateFormatter = new Intl.DateTimeFormat(currentAccount.locale, {
-  day: '2-digit',
-  month: '2-digit',
-  year: '2-digit',
-  hour: '2-digit',
-  minute: '2-digit',
-});
+let currentAccount, timer;
+// // Fake always logged in
+// currentAccount = account1;
+// updateUI(currentAccount);
+// containerApp.style.opacity = 100;
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -222,21 +238,23 @@ btnLogin.addEventListener('click', function (e) {
   console.log(currentAccount);
 
   if (currentAccount?.pin === +inputLoginPin.value) {
+    // start logout timer
+    if (timer) clearInterval(timer);
+    timer = startLogOutTimer();
+
     // Display UI and message
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(' ')[0]
     }`;
     const currentDate = new Date();
-    labelDate.textContent = dateFormatter.format(currentDate);
+    labelDate.textContent = new Intl.DateTimeFormat(currentAccount.locale, {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(currentDate);
 
-    // labelDate.textContent = currentDate.toLocaleDateString('en-IL', {
-    //   day: '2-digit',
-    //   month: '2-digit',
-    //   year: '2-digit',
-    //   weekday: 'short',
-    //   hour: '2-digit',
-    //   minute: '2-digit',
-    // });
     containerApp.style.opacity = 100;
 
     // Clear input fields
@@ -267,7 +285,9 @@ btnTransfer.addEventListener('click', function (e) {
     currentAccount.movementsDates.push(new Date().toISOString());
     receiverAcc.movements.push(amount);
     receiverAcc.movementsDates.push(new Date().toISOString());
-
+    // reset timer
+    clearInterval(timer);
+    timer = startLogOutTimer();
     // Update UI
     updateUI(currentAccount);
   }
@@ -283,7 +303,9 @@ btnLoan.addEventListener('click', function (e) {
       // Add movement
       currentAccount.movements.push(amount);
       currentAccount.movementsDates.push(new Date().toISOString());
-
+      // reset timer
+      clearInterval(timer);
+      timer = startLogOutTimer();
       // Update UI
       updateUI(currentAccount);
     }, 2500);
@@ -634,14 +656,14 @@ console.log(new Intl.NumberFormat('en-US', options).format(num));
 // ? the setInterval will keep running until it is stopped using clearInterval or the page is closed meaning it will keep putting the callback function in the callback queue every interval
 
 //! the third argument and onwards in setTimeout and setInterval are the arguments to be passed to the callback function
-const ingredients = ['olives', 'spinach'];
-const pizzaTimer = setTimeout(
-  (ing1, ing2) => {
-    console.log(`Here is your pizza with ${ing1} and ${ing2} 🍕`);
-  },
-  3000,
-  ...ingredients
-);
+// const ingredients = ['olives', 'spinach'];
+// const pizzaTimer = setTimeout(
+//   (ing1, ing2) => {
+//     console.log(`Here is your pizza with ${ing1} and ${ing2} 🍕`);
+//   },
+//   3000,
+//   ...ingredients
+// );
 //! you can cancel the timer using clearTimeout
 // clearTimeout(pizzaTimer); // cancels the timer before it executes
 

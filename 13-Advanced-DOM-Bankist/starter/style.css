@@ -20,11 +20,16 @@
   box-sizing: inherit;
 }
 
+*:focus {
+  outline: blue 1px solid;
+}
 html {
   font-size: 62.5%;
   box-sizing: border-box;
 }
-
+::-webkit-scrollbar {
+  display: none !important;
+}
 body {
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
@@ -101,9 +106,6 @@ p {
 }
 
 /* This is BAD for accessibility! Don't do in the real world! */
-button:focus {
-  outline: none;
-}
 
 img {
   transition: filter 0.5s;
