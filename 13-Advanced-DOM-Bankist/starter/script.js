@@ -186,13 +186,55 @@ buttonScrollTo.addEventListener('click', e => {
 // ! the above method works but is not efficient as it adds an event listener to each link individually
 // ! a better way is to use event delegation - add a single event listener to a common parent element of all the links
 // ! and then determine which link was clicked based on the event target
-document.querySelector('.nav__links').addEventListener('click', e => {
-  console.log(e.target);
+const linksContainer = document.querySelector('.nav__links');
+linksContainer.addEventListener('click', e => {
+  e.preventDefault();
   if (e.target.classList.contains('nav__link')) {
     const id = e.target.getAttribute('href');
     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
   }
 });
+
+/////////////////////////////////////////
+// ? Tabbed component
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
+
+tabsContainer.addEventListener('click', e => {
+  // matching strategy
+  const clicked = e.target.closest('.operations__tab'); // to make sure we get the button even if we click on the span inside it
+  if (!clicked) return; // guard clause
+
+  // deactivate
+  tabs.forEach(t => t.classList.remove('operations__tab--active'));
+  tabsContent.forEach(c => c.classList.remove('operations__content--active'));
+
+  // activate
+  clicked.classList.add('operations__tab--active');
+  document
+    .querySelector(`.operations__content--${clicked.dataset.tab}`)
+    .classList.add('operations__content--active');
+});
+
+/////////////////////////////////////////////
+// ? Menu fade animation
+const links = document.querySelectorAll('.nav__link');
+function handleHover(e) {
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    links.forEach(el => {
+      if (el !== link) el.classList.toggle('fade');
+    });
+  }
+}
+linksContainer.addEventListener('mouseover', handleHover);
+linksContainer.addEventListener('mouseout', handleHover);
+// to pass an argument to the handle function, we can use the bind method to create a new function with the desired argument value
+// linksContainer.addEventListener('mouseover', handleHover.bind(0.5));
+// linksContainer.addEventListener('mouseout', handleHover.bind(1));
+
+// ! this would make "this" keyword inside handleHover point to the value passed to bind (0.5 or 1)
 
 ////////////////////////////////////////////
 ////////////////////////////////////////////
@@ -250,7 +292,7 @@ message.style.height =
   Number.parseFloat(getComputedStyle(message).height) + 30 + 'px'; // message.height returns a string with 'px' at the end, so we need to parse it to a number first
 
 // ? CSS custom properties (variables)
-document.documentElement.style.setProperty('--color-primary', 'orangered'); // changing the value of a CSS variable
+// document.documentElement.style.setP roperty('--color-primary', 'orangered'); // changing the value of a CSS variable
 // ! setProperty takes two arguments: the property name (with -- for CSS variables) and the value to set. it works on any element.
 // message.style.setProperty('background-color', 'blue'); //! changing the background color of the message element using setProperty (must use kebab-case for CSS properties)
 //! root element is document.documentElement, so root CSS variables are defined there
@@ -371,17 +413,17 @@ function alertH1(e) {
 const h1e = document.querySelector('h1');
 
 //? going downwards: child
-console.log(h1e.querySelectorAll('.highlight')); // all descendants with class 'highlight'
+// console.log(h1e.querySelectorAll('.highlight')); // all descendants with class 'highlight'
 // ! this would work no matter how deep the descendants are
-console.log(h1e.childNodes); // NodeList of all direct child nodes - not used often
+// console.log(h1e.childNodes); // NodeList of all direct child nodes - not used often
 // ! childNodes returns all direct child NODES, including text nodes and comment nodes, it is a live collection
-console.log(h1e.children); // HTMLCollection of direct child elements
+// console.log(h1e.children); // HTMLCollection of direct child elements
 // ! children returns only direct child ELEMENTS, excluding text nodes and comment nodes, it is a live collection
 
 // ? an HTMLCollection is always live, while a NodeList can be live or static depending on how it is created. for example, querySelectorAll returns a static NodeList, while childNodes returns a live NodeList.
 
 h1e.firstElementChild.style.color = 'white'; // first child element
-h1e.lastElementChild.style.color = 'orangered'; // last child element
+h1e.lastElementChild.style.color = 'white'; // last child element
 // ! firstElementChild and lastElementChild return the first and last child ELEMENTS respectively, excluding text nodes and comment nodes so in the string "when <span>banking</span> meets <span>minimalist</span>" the firstElementChild is the first <span> element and the lastElementChild is the second <span> element
 
 // ? going upwards: parents
@@ -390,7 +432,7 @@ h1e.lastElementChild.style.color = 'orangered'; // last child element
 // ! parentNode and parentElement return the same thing for element nodes, but for other node types (like text nodes), parentNode will return the parent node, while parentElement will return null.
 
 //! sometimes we want to find a specific ancestor element, not just the direct parent
-h1e.closest('.header').style.background = 'var(--gradient-secondary)';
+// h1e.closest('.header').style.background = 'var(--gradient-secondary)';
 // ! closest() method traverses up the DOM tree to find the nearest ancestor that matches the selector. if no matching ancestor is found, it returns null.
 // ! it can be used to find the element itself if it matches the selector
 
@@ -403,6 +445,6 @@ h1e.closest('.header').style.background = 'var(--gradient-secondary)';
 
 // console.log(h1e.parentElement.children); // HTMLCollection of all sibling elements
 // !  parentElement.children returns all child elements of the parent, including the element itself
-[...h1e.parentElement.children].forEach(el => {
-  if (el !== h1e) el.style.transform = 'scale(0.5)';
-});
+// [...h1e.parentElement.children].forEach(el => {
+//   if (el !== h1e) el.style.transform = 'scale(0.5)';
+// });

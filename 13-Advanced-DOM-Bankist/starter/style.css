@@ -20,7 +20,7 @@
   box-sizing: inherit;
 }
 
-*:focus {
+*:focus-visible {
   outline: blue 1px solid;
 }
 html {
@@ -142,11 +142,11 @@ img {
   display: flex;
   align-items: center;
   list-style: none;
+  gap: 4rem;
 }
 
-.nav__item {
-  margin-left: 4rem;
-}
+/* .nav__item {
+} */
 
 .nav__link:link,
 .nav__link:visited {
@@ -173,6 +173,9 @@ img {
   color: #333;
 }
 
+.fade {
+  opacity: 0.5;
+}
 /* HEADER */
 .header {
   padding: 0 3rem;
