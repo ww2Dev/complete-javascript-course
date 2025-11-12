@@ -120,7 +120,7 @@ const closeModal = function () {
   // // Deactivate focus guard
   // modalFocusGuard.deactivate();
 };
-console.log('modalbuttons', btnsOpenModal);
+// console.log('modalbuttons', btnsOpenModal);
 
 btnsOpenModal.forEach(btn => btn.addEventListener('click', openModal));
 btnCloseModal.addEventListener('click', closeModal);
@@ -175,14 +175,23 @@ buttonScrollTo.addEventListener('click', e => {
   section1.scrollIntoView({ behavior: 'smooth' });
 });
 
-//? page navigation
-const navLinks = document.querySelectorAll('.nav__link');
-navLinks.forEach(link => {
-  link.addEventListener('click', e => {
-    e.preventDefault();
-    const id = this.getAttribute('href'); // get the relative URL from the href attribute value
+//? page navigation - event delegation
+// const navLinks = document.querySelectorAll('.nav__link');
+// navLinks.forEach(link => {
+//   link.addEventListener('click', e => {
+//     e.preventDefault();
+//     const id = this.getAttribute('href'); // get the relative URL from the href attribute value
+//   });
+// });
+// ! the above method works but is not efficient as it adds an event listener to each link individually
+// ! a better way is to use event delegation - add a single event listener to a common parent element of all the links
+// ! and then determine which link was clicked based on the event target
+document.querySelector('.nav__links').addEventListener('click', e => {
+  console.log(e.target);
+  if (e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href');
     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
-  });
+  }
 });
 
 ////////////////////////////////////////////
@@ -274,7 +283,7 @@ const logo = document.querySelector('.nav__logo');
 // data attributes are used to store extra information on HTML elements that doesn't have any visual representation
 // they are defined using the prefix 'data-' followed by the attribute name
 // for example: <div data-version-number="3.0" ></div>
-console.log(logo.dataset.versionNumber); // 3.0
+// console.log(logo.dataset.versionNumber); // 3.0
 // ! dataset is a special property that allows us to access all data attributes of an element as a JS object
 
 // ? classes
@@ -355,4 +364,45 @@ function alertH1(e) {
 // ! we should use event delegation (attaching a single event listener to a parent element) instead of attaching event listeners to multiple child elements.
 // ! this is more efficient and easier to manage.
 ///////////////////////////////////////
-// ? Event delegation
+// ? DOM traversing
+// dom traversing is the process of navigating through the DOM tree to access and manipulate elements. upward, downward, sideways.
+
+// TODO: an ELEMENT IS A NODE, BUT A NODE IS NOT ALWAYS AN ELEMENT. FOR EXAMPLE, TEXT NODES AND COMMENT NODES ARE NODES BUT NOT ELEMENTS.
+const h1e = document.querySelector('h1');
+
+//? going downwards: child
+console.log(h1e.querySelectorAll('.highlight')); // all descendants with class 'highlight'
+// ! this would work no matter how deep the descendants are
+console.log(h1e.childNodes); // NodeList of all direct child nodes - not used often
+// ! childNodes returns all direct child NODES, including text nodes and comment nodes, it is a live collection
+console.log(h1e.children); // HTMLCollection of direct child elements
+// ! children returns only direct child ELEMENTS, excluding text nodes and comment nodes, it is a live collection
+
+// ? an HTMLCollection is always live, while a NodeList can be live or static depending on how it is created. for example, querySelectorAll returns a static NodeList, while childNodes returns a live NodeList.
+
+h1e.firstElementChild.style.color = 'white'; // first child element
+h1e.lastElementChild.style.color = 'orangered'; // last child element
+// ! firstElementChild and lastElementChild return the first and last child ELEMENTS respectively, excluding text nodes and comment nodes so in the string "when <span>banking</span> meets <span>minimalist</span>" the firstElementChild is the first <span> element and the lastElementChild is the second <span> element
+
+// ? going upwards: parents
+// console.log(h1e.parentNode); // direct parent NODE - not used often
+// console.log(h1e.parentElement); // direct parent ELEMENT - more commonly used
+// ! parentNode and parentElement return the same thing for element nodes, but for other node types (like text nodes), parentNode will return the parent node, while parentElement will return null.
+
+//! sometimes we want to find a specific ancestor element, not just the direct parent
+h1e.closest('.header').style.background = 'var(--gradient-secondary)';
+// ! closest() method traverses up the DOM tree to find the nearest ancestor that matches the selector. if no matching ancestor is found, it returns null.
+// ! it can be used to find the element itself if it matches the selector
+
+// ? going sideways: siblings
+// console.log(h1e.previousElementSibling); // previous sibling ELEMENT
+// console.log(h1e.nextElementSibling); // next sibling ELEMENT
+// ! nodes
+// console.log(h1e.previousSibling); // previous sibling NODE
+// console.log(h1e.nextSibling); // next sibling NODE
+
+// console.log(h1e.parentElement.children); // HTMLCollection of all sibling elements
+// !  parentElement.children returns all child elements of the parent, including the element itself
+[...h1e.parentElement.children].forEach(el => {
+  if (el !== h1e) el.style.transform = 'scale(0.5)';
+});
