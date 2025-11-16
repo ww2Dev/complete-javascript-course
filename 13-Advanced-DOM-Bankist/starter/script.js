@@ -7,7 +7,7 @@ const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
-
+const header = document.querySelector('.header');
 // // Focus Guard - Reusable focus trapping utility
 // const createFocusGuard = container => {
 //   let lastFocusedElement = null;
@@ -236,6 +236,52 @@ linksContainer.addEventListener('mouseout', handleHover);
 
 // ! this would make "this" keyword inside handleHover point to the value passed to bind (0.5 or 1)
 
+//? sticky navigation
+
+// window.addEventListener('scroll', e => {
+//   if (window.scrollY > 0) {
+//     document.querySelector('.nav').classList.add('sticky');
+//   } else {
+//     document.querySelector('.nav').classList.remove('sticky');
+//   }
+// });
+// ! the above method works but is not efficient as it triggers the scroll event every time the user scrolls, which can be expensive for performance
+// ! a better way is to use the Intersection Observer API
+// ? intersection Observer API
+// to use the Intersection Observer API, we need to create an observer and define a callback function that will be called when the observed element intersects with the viewport
+const nav = document.querySelector('.nav');
+const sentinel = document.querySelector('.sentinel');
+const sentinelHeight = sentinel.getBoundingClientRect().height;
+const observer = new IntersectionObserver(
+  entries => {
+    const [entry] = entries; // destructuring the first entry from the entries array // ! same as const entry = entries[0];
+
+    //  ! entry is an object that contains information about the intersection
+    /*
+    {
+      boundingClientRect: DOMRectReadOnly, //! size of the observed element
+      intersectionRect: DOMRectReadOnly, //! size of the intersection between the observed element and the root
+      intersectionRatio: number, //! ratio of intersection area to the boundingClientRect area
+      isIntersecting: boolean, //! true if the observed element is intersecting with the root
+      rootBounds: DOMRectReadOnly, //! size of the root element
+      target: Element, //! the observed element
+      time: DOMHighResTimeStamp //! timestamp of the intersection
+    }
+    */
+    console.log(entry);
+    if (!entry.isIntersecting) {
+      nav.classList.add('sticky');
+    } else {
+      nav.classList.remove('sticky');
+    }
+  },
+  {
+    root: null, // null means the viewport, root is the element that we want to observe the intersection with
+    threshold: 0, // trigger when 10% of the sentinel is visible - makes transition more responsive
+    rootMargin: `-${sentinelHeight}px`, // margin around the root element - to trigger the intersection before the sentinel actually reaches the top of the viewport (height of the nav)
+  }
+);
+observer.observe(sentinel); // observe header element
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 ////////////////////////////////////////////
@@ -244,7 +290,7 @@ linksContainer.addEventListener('mouseout', handleHover);
 // console.log(document.head); // Logs the head element
 // console.log(document.body); // Logs the body element
 
-const header = document.querySelector('.header'); // Selects the first element with class 'header'
+// Selects the first element with class 'header'
 // const sections = document.querySelectorAll('.section'); // Selects all elements with class 'section'
 // const section1 = document.getElementById('section--1'); // Selects the element with ID 'section--1'
 // const buttons = document.getElementsByTagName('button'); // selects all button elements
@@ -339,7 +385,7 @@ const logo = document.querySelector('.nav__logo');
 // ? types of events and event handlers
 
 const h1 = document.querySelector('h1');
-h1.addEventListener('mouseenter', alertH1);
+// h1.addEventListener('mouseenter', alertH1);
 
 // a shorter way of adding event listeners - not recommended / old way
 // h1.onmouseenter = e => {
