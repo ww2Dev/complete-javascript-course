@@ -282,6 +282,24 @@ const observer = new IntersectionObserver(
   }
 );
 observer.observe(sentinel); // observe header element
+
+//? scroll animation
+const allSections = document.querySelectorAll('.section');
+const sectionObserver = new IntersectionObserver(
+  entries => {
+    const [entry] = entries;
+    if (entry.isIntersecting) {
+      entry.target.classList.remove('section--hidden');
+      sectionObserver.unobserve(entry.target);
+    }
+  },
+  { root: null, threshold: 0.15 }
+);
+allSections.forEach(section => {
+  section.classList.add('section--hidden');
+  sectionObserver.observe(section);
+});
+
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 ////////////////////////////////////////////
@@ -299,12 +317,12 @@ observer.observe(sentinel); // observe header element
 // ! In contrast, querySelectorAll returns a static NodeList that does not update automatically.
 
 // ? creating and inserting elements
-const message = document.createElement('div'); // Creates a DOM object representing a <div> element
-message.classList.add('cookie-message'); // we can use DOM methods to manipulate it
+// const message = document.createElement('div'); // Creates a DOM object representing a <div> element
+// message.classList.add('cookie-message'); // we can use DOM methods to manipulate it
 // message.textContent =
 //   'We use cookies for improved functionality and analytics.'; // using textContent to add text content
-message.innerHTML =
-  'We use cookies for improved functionality and analytics. <button class="btn btn--close-cookie">Got it!</button>'; // using innerHTML instead of textContent to add HTML content
+// message.innerHTML =
+// 'We use cookies for improved functionality and analytics. <button class="btn btn--close-cookie">Got it!</button>'; // using innerHTML instead of textContent to add HTML content
 
 // ? inserting elements
 // header.prepend(message); // adds as the first child of header
@@ -316,19 +334,19 @@ message.innerHTML =
 // header.append(message.cloneNode(true)); // to add a copy of the element in multiple places
 
 // header.before(message); // adds the element before the header
-header.after(message); // adds the element after the header
+// header.after(message); // adds the element after the header
 
 // ? deleting elements
-document.querySelector('.btn--close-cookie')?.addEventListener('click', e => {
-  message.remove(); // removes the element from the DOM
-  //! before remove() method was introduced, the old way to remove an element was:
-  // message.parentElement.removeChild(message); // moving from child to parent is called DOM traversing
-});
+// document.querySelector('.btn--close-cookie')?.addEventListener('click', e => {
+// message.remove(); // removes the element from the DOM
+//! before remove() method was introduced, the old way to remove an element was:
+// message.parentElement.removeChild(message); // moving from child to parent is called DOM traversing
+// });
 
 ///////////////////////////////////////
 // ? Styles
-message.style.backgroundColor = '#37383d';
-message.style.width = '120%';
+// message.style.backgroundColor = '#37383d';
+// message.style.width = '120%';
 
 // console.log(message.style.color); // .someproperty only works for inline styles
 // console.log(getComputedStyle(message).color); // to get all styles, including those from CSS files
