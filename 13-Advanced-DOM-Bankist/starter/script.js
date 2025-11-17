@@ -268,7 +268,6 @@ const observer = new IntersectionObserver(
       time: DOMHighResTimeStamp //! timestamp of the intersection
     }
     */
-    console.log(entry);
     if (!entry.isIntersecting) {
       nav.classList.add('sticky');
     } else {
@@ -287,18 +286,46 @@ observer.observe(sentinel); // observe header element
 const allSections = document.querySelectorAll('.section');
 const sectionObserver = new IntersectionObserver(
   entries => {
-    const [entry] = entries;
-    if (entry.isIntersecting) {
-      entry.target.classList.remove('section--hidden');
-      sectionObserver.unobserve(entry.target);
-    }
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.remove('section--hidden');
+        sectionObserver.unobserve(entry.target);
+      }
+    });
   },
-  { root: null, threshold: 0.15 }
+  {
+    root: null,
+    threshold: 0.15, // Increased threshold for better visibility control
+    rootMargin: '-100px 0px -100px 0px', // Creates a buffer zone - section must be 100px into the viewport
+  }
 );
 allSections.forEach(section => {
   section.classList.add('section--hidden');
   sectionObserver.observe(section);
 });
+
+// ? Lazy loading images
+const imgSrcs = document.querySelectorAll('img[data-src]');
+const loadImg = (entries, observer) => {
+  entries.forEach(entry => {
+    //! iterating over all entries to handle cases where multiple images intersect at once (e.g user refreshes the page and multiple images are in the viewport)
+    if (!entry.isIntersecting) return;
+
+    // Replace src with data-src
+    entry.target.src = entry.target.dataset.src; //! emits a load event when the image is loaded
+    // image element emits a load event when the image has finished loading
+    entry.target.addEventListener('load', () => {
+      entry.target.classList.remove('lazy-img'); // remove blur class after image has loaded
+    });
+    imgObserver.unobserve(entry.target); // stop observing the image once it has been loaded
+  });
+};
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
+  rootMargin: '200px',
+});
+imgSrcs.forEach(img => imgObserver.observe(img));
 
 ////////////////////////////////////////////
 ////////////////////////////////////////////
@@ -352,8 +379,8 @@ allSections.forEach(section => {
 // console.log(getComputedStyle(message).color); // to get all styles, including those from CSS files
 //! the difference between message.style and getComputedStyle(message) is that the former only accesses inline styles set directly on the element (meaning only inline styles applied will have a value, the rest will be empty), while the latter retrieves all computed styles applied to the element, including those from external stylesheets and inherited styles (meaning the object you are returned is one in which all keys are properties that have a value).
 
-message.style.height =
-  Number.parseFloat(getComputedStyle(message).height) + 30 + 'px'; // message.height returns a string with 'px' at the end, so we need to parse it to a number first
+// message.style.height =
+// Number.parseFloat(getComputedStyle(message).height) + 30 + 'px'; // message.height returns a string with 'px' at the end, so we need to parse it to a number first
 
 // ? CSS custom properties (variables)
 // document.documentElement.style.setP roperty('--color-primary', 'orangered'); // changing the value of a CSS variable
