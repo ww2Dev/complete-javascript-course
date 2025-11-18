@@ -327,6 +327,86 @@ const imgObserver = new IntersectionObserver(loadImg, {
 });
 imgSrcs.forEach(img => imgObserver.observe(img));
 
+// ? slider component
+const slider = document.querySelector('.slider');
+const slides = document.querySelectorAll('.slide');
+const btnLeft = document.querySelector('.slider__btn--left');
+const btnRight = document.querySelector('.slider__btn--right');
+const dotContainer = document.querySelector('.dots');
+
+let currentSlide = 0;
+const maxSlide = slides.length;
+
+slides.forEach((slide, index) => {
+  slide.style.transform = `translateX(${100 * index}%)`;
+  dotContainer.insertAdjacentHTML(
+    'beforeend',
+    `<button class="dots__dot ${
+      index === 0 ? 'dots__dot--active' : ''
+    }"  data-slide="${index}"></button>`
+  );
+});
+
+const activateDot = slide => {
+  document
+    .querySelectorAll('.dots__dot')
+    .forEach(dot => dot.classList.remove('dots__dot--active'));
+
+  document
+    .querySelector(`.dots__dot[data-slide="${slide}"]`)
+    .classList.add('dots__dot--active');
+};
+
+const gotoSlide = (slide = 0) => {
+  slides.forEach(
+    (slide, index) =>
+      (slide.style.transform = `translateX(${100 * (index - currentSlide)}%)`)
+  );
+  activateDot(slide);
+};
+
+dotContainer.addEventListener('click', e => {
+  if (e.target.classList.contains('dots__dot')) {
+    const { slide } = e.target.dataset;
+    currentSlide = +slide; // Convert to number
+    gotoSlide(currentSlide);
+  }
+});
+
+// next slide
+btnRight.addEventListener('click', e => {
+  if (currentSlide === maxSlide - 1) currentSlide = 0;
+  else currentSlide++;
+  gotoSlide(currentSlide);
+});
+// previous slide
+btnLeft.addEventListener('click', e => {
+  if (currentSlide === 0) currentSlide = maxSlide - 1; // Go to last slide
+  else currentSlide--;
+  gotoSlide(currentSlide);
+});
+
+// // keyboard navigation for slider with throttling
+let lastKeyTime = 0;
+const keyDelay = 500; // Delay in milliseconds between movements
+
+document.addEventListener('keydown', function (e) {
+  const currentTime = Date.now();
+
+  if (currentTime - lastKeyTime < keyDelay) {
+    return;
+  }
+
+  if (e.key === 'ArrowLeft') {
+    lastKeyTime = currentTime;
+    btnLeft.click();
+  }
+  if (e.key === 'ArrowRight') {
+    lastKeyTime = currentTime;
+    btnRight.click();
+  }
+});
+
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 ////////////////////////////////////////////
@@ -539,3 +619,22 @@ h1e.lastElementChild.style.color = 'white'; // last child element
 // [...h1e.parentElement.children].forEach(el => {
 //   if (el !== h1e) el.style.transform = 'scale(0.5)';
 // });
+
+////////////////////////////////////////
+// ? lifecycle DOM events
+document.addEventListener('DOMContentLoaded', e => {
+  console.log('HTML parsed and DOM tree built!', e);
+});
+// this event is fired when the initial HTML document has been completely loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
+window.addEventListener('load', e => {
+  console.log('Page fully loaded', e);
+});
+// ! if you look in the network tab, you will see "DOMContentLoaded","load" and "finish". the "finish" event is not accessible via JS, it is just an indicator in the network tab that all resources have finished loading.
+// this event is fired when the entire page has fully loaded, including all dependent resources such as stylesheets and images.
+// window.addEventListener('beforeunload', e => {
+//   e.preventDefault();
+//   console.log(e);
+//   e.returnValue = '';
+// });
+// this event is fired when the user is about to leave the page. it allows us to show a confirmation dialog to prevent accidental navigation away from the page.
+// ! some browsers may not display a custom message in the confirmation dialog for security reasons.
