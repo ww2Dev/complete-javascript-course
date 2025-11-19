@@ -631,10 +631,39 @@ window.addEventListener('load', e => {
 });
 // ! if you look in the network tab, you will see "DOMContentLoaded","load" and "finish". the "finish" event is not accessible via JS, it is just an indicator in the network tab that all resources have finished loading.
 // this event is fired when the entire page has fully loaded, including all dependent resources such as stylesheets and images.
-// window.addEventListener('beforeunload', e => {
-//   e.preventDefault();
-//   console.log(e);
-//   e.returnValue = '';
-// });
+window.addEventListener('beforeunload', e => {
+  e.preventDefault();
+  console.log(e);
+  // e.returnValue = ''; // some browsers require returnValue to be set
+  // ! It is fired only if there was ANY interaction of the user with the site.
+  // ! the aim of this event IS eg. secretly saving data left in forms (or else) on behalf of user (or logging user behavior etc.). It is NOT for blocking refreshing the site
+});
 // this event is fired when the user is about to leave the page. it allows us to show a confirmation dialog to prevent accidental navigation away from the page.
 // ! some browsers may not display a custom message in the confirmation dialog for security reasons.
+
+// ? defer and async script attributes
+// the script tag can be placed in the head or at the end of the body.
+//  if it is placed in the head, it will block the parsing of the HTML document until the script is downloaded and executed.
+
+// ! the normal flow is:
+// ! HEAD: parse HTML -> download script -> execute script -> continue parsing HTML
+// ! BODY END: parse HTML -> continue parsing HTML -> download script -> execute script
+// ? async
+
+// ! the async flow is:
+// ! HEAD: parse HTML & download script (as it gets to the script tag) -> execute script (as soon as downloaded) -> continue parsing HTML
+// ! BODY END: doesnt make sense here
+
+// ? defer
+// ! the defer flow is:
+// ! HEAD: parse HTML & download script (as it gets to the script tag) -> continue parsing HTML -> execute script (after HTML is fully parsed)
+// ! BODY END: doesnt make sense here
+
+// ? the difference between async and defer is that:
+// ? async scripts are executed as soon as they are downloaded, while defer scripts are executed only after the HTML document is fully parsed.
+// ? which means that defer scripts are guaranteed to execute in the order they appear in the document, while async scripts may execute in any order depending on their download times.
+// ? async blocks HTML parsing while defer does not.
+// ? DOMContentLoaded event is fired after defer scripts are executed, but before async scripts are executed.
+
+// ! in general, defer is preferred for scripts that rely on the DOM being fully parsed, while async is preferred for scripts that do not depend on the DOM and can be executed as soon as they are downloaded.
+// ? DEFER is overall the best solution, use foryour own scripts and when order matters. ASYNC is best for third party scripts where you dont care about order and want them to load as fast as possible.
